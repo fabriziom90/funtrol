@@ -1,0 +1,52 @@
+@use './_partials/variables' as *;
+@use './_partials/mixins' as *; 
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+header{
+    background-color: $mainBlue;
+    padding: 20px 0px;
+}
+
+h1, h2, h3, h4, h5, h6{
+    font-weight: 700;
+    margin: 0;
+    padding: 0;
+}
+
+p{
+    margin: 0;
+    padding: 0;
+}
+
+a{
+    text-decoration: none;
+    color: #000
+}
+
+ul{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.fw-700{
+    font-weight: 700
+}
+
+.main-button{
+    @include mixin_button($mainBlue, $mainHoverBlue, #fff);
+}
+
+.secondary-button{
+    @include mixin_button($mainGrey, $mainGreyHover, grey);
+}
+
+.danger-alert{
+    padding: 20px 10px;
+    color: #fff;
+    background-color: $mainRed;
+    border-radius: 15px;
+    font-size: 18px;
+}

@@ -1,0 +1,15 @@
+@mixin mixin_button($bg_color, $bg_hover, $text_color){
+    border-radius: 20px;
+    text-align: center;
+    padding: 10px 15px;
+    background-color: $bg_color;
+    color: $text_color;
+    transition: 0.3s;
+    font-size: 18px;
+    font-weight: 700;
+    border: 0px;
+
+    &:hover{
+        background-color: $bg_hover;
+    }
+}
