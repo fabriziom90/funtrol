@@ -3,6 +3,10 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\ProductionController;
+use App\Http\Controllers\Admin\AdministrationController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -18,9 +22,21 @@ Route::get('/', function () {
  * Dashboard - accessibile solo a utenti autenticati
  */
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::middleware('admin')->group(function () {
+        Route::prefix('admin')->name('admin.')->group(function() {
+            Route::resource('suppliers', SupplierController::class);
+            Route::resource('products', ProductController::class);
+            Route::resource('recepies', RecepyController::class);
+            Route::get('/administration', [AdministrationController::class, 'index'])->name('administration.index');
+        });
+    });
+
+    Route::get('/production', [ProductionController::class, 'index'])->name('production.index');
+
+    // Route::resource('ricette', RicettaController::class);
+    // Route::resource('movimenti', MovimentoMagazzinoController::class);
+    // Route::resource('ordini', OrdineController::class);
+
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

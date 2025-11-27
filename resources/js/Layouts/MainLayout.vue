@@ -6,7 +6,7 @@ import Footer from "../Components/Footer.vue";
     <Header />
     <main class="px-3">
         <div class="container-fluid">
-            <router-view />
+            <slot />
         </div>
     </main>
     <Footer />
