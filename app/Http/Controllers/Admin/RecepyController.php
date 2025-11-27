@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Models\Recepy;
 use App\Http\Requests\StoreRecepyRequest;
 use App\Http\Requests\UpdateRecepyRequest;
+use App\Http\Controllers\Controller;
 
 class RecepyController extends Controller
 {

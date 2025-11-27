@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Models\Supplier;
 use App\Http\Requests\StoreSupplierRequest;
 use App\Http\Requests\UpdateSupplierRequest;
+use App\Http\Controllers\Controller;
+use Inertia\Inertia;
 
 class SupplierController extends Controller
 {
@@ -13,7 +15,13 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        //
+        $suppliers = Supplier::all();
+        return Inertia::render('Admin/Supplier/IndexSupplier', ['suppliers' => $suppliers, 'columns' => [
+            ['text' => 'ID', 'value' => 'id'],
+            ['text' => 'Nome', 'value' => 'name'],
+            ['text' => 'Email', 'value' => 'email'],
+            ['text' => 'Telefono', 'value' => 'phone'],
+        ]]);
     }
 
     /**

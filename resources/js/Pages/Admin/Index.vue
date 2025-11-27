@@ -17,7 +17,9 @@ import MainLayout from "@/Layouts/MainLayout.vue";
                 Gestione Prodotti
             </Link>
             <Link class="card-section"> Gestione Ricette </Link>
-            <Link class="card-section"> Gestione Fornitori </Link>
+            <Link :href="route('admin.suppliers.index')" class="card-section">
+                Gestione Fornitori
+            </Link>
             <Link class="card-section"> Storico Prezzi </Link>
         </div>
     </MainLayout>

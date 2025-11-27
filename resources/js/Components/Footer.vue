@@ -16,7 +16,9 @@ const isRouteActive = (route) => {
                         class="d-flex justify-content-center align-items-center"
                     >
                         <li
-                            :class="isRouteActive('production') ? 'active' : ''"
+                            :class="
+                                isRouteActive('/production') ? 'active' : ''
+                            "
                         >
                             <Link :href="route('production.index')">
                                 <i class="fas fa-utensils fa-2xl"></i>

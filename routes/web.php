@@ -5,7 +5,10 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\Admin\AdministrationController;
-
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\Admin\RecepyController;
+// use App\Http\Controllers\Admin\ProductController;
 
 
 /*

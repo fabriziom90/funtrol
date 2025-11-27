@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Http\Controllers\Controller;
+use Inertia\Inertia;
 
 class ProductController extends Controller
 {
@@ -12,8 +14,9 @@ class ProductController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        //
+    {   
+        $products = Product::all();
+        return Inertia::render('Admin/Products/IndexProducts');
     }
 
     /**
