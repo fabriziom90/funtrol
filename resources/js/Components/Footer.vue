@@ -39,11 +39,7 @@ const isRouteActive = (route) => {
                                 <span>Calendario</span>
                             </Link>
                         </li>
-                        <li
-                            :class="
-                                isRouteActive('/administration') ? 'active' : ''
-                            "
-                        >
+                        <li :class="isRouteActive('/admin') ? 'active' : ''">
                             <Link :href="route('admin.administration.index')">
                                 <i class="fas fa-gear fa-2xl"></i>
                                 <span>Amministrazione</span>

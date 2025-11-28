@@ -21,7 +21,8 @@ class SupplierController extends Controller
             ['text' => 'Nome', 'value' => 'name'],
             ['text' => 'Email', 'value' => 'email'],
             ['text' => 'Telefono', 'value' => 'phone'],
-        ]]);
+        ],
+        'toast' => session('toast')]);
     }
 
     /**
@@ -29,7 +30,7 @@ class SupplierController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Admin/Supplier/CreateSupplier');
     }
 
     /**
@@ -37,7 +38,21 @@ class SupplierController extends Controller
      */
     public function store(StoreSupplierRequest $request)
     {
-        //
+        $form_data = $request->validated();
+
+        $newSupplier = new Supplier();
+        $newSupplier->name = $form_data['name'];
+        $newSupplier->email = $form_data['email'];
+        $newSupplier->phone = $form_data['phone'];
+
+        $newSupplier->save();
+
+        return redirect()->route('admin.suppliers.index')->with([
+            'toast' => [
+                'type' => 'success',
+                'message' => "Fornitore creato con successo."
+            ]
+        ]);
     }
 
     /**
@@ -53,7 +68,7 @@ class SupplierController extends Controller
      */
     public function edit(Supplier $supplier)
     {
-        //
+        return Inertia::render('Admin/Supplier/EditSupplier', ['supplier' => $supplier]);
     }
 
     /**
@@ -61,7 +76,20 @@ class SupplierController extends Controller
      */
     public function update(UpdateSupplierRequest $request, Supplier $supplier)
     {
-        //
+        $form_data = $request->validated();
+
+        $supplier->name = $form_data['name'];
+        $supplier->email = $form_data['email'];
+        $supplier->phone = $form_data['phone'];
+
+        $supplier->save();
+
+        return redirect()->route('admin.suppliers.index')->with([
+            'toast' => [
+                'type' => 'success',
+                'message' => 'Fornitore modificato con successo'
+            ]
+        ]);
     }
 
     /**
@@ -69,6 +97,13 @@ class SupplierController extends Controller
      */
     public function destroy(Supplier $supplier)
     {
-        //
+        $supplier->delete();
+
+        return redirect()->route('admin.suppliers.index')->with([
+            'toast' => [
+                'type'      => 'success',
+                'message'  => 'Fornitore cancellato con successo'
+            ]
+        ]);
     }
 }

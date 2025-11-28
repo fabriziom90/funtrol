@@ -1,6 +1,7 @@
-import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
 import '../scss/app.scss';
-import '@fortawesome/fontawesome-free/css/all.css'
+import '@fortawesome/fontawesome-free/css/all.css';
+import 'vue-toast-notification/dist/theme-bootstrap.css';
 
 
 import { createApp, h } from 'vue';
