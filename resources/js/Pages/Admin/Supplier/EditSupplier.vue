@@ -6,75 +6,85 @@ import GoBackButton from "@/Components/GoBackButton.vue";
 import { useToast } from "vue-toast-notification";
 
 const props = defineProps({
-    supplier: Object,
+  supplier: Object,
 });
 
 const $toast = useToast();
 
 const form = useForm({
-    name: props.supplier.name,
-    email: props.supplier.email,
-    phone: props.supplier.phone,
+  name: props.supplier.name,
+  email: props.supplier.email,
+  phone: props.supplier.phone,
 });
 
 const handleSubmitForm = () => {
-    form.put(route("admin.suppliers.update", props.supplier), {
-        onSuccess: (page) => {
-            const toast = page.props.toast;
-            if (toast) {
-                $toast.success(toast.message, {
-                    position: "top-right",
-                    duration: 3000,
-                });
-            }
-        },
-        onError: (err) => {
-            console.log(err);
-        },
-    });
+  form.put(route("admin.suppliers.update", props.supplier), {
+    onSuccess: (page) => {
+      const toast = page.props.toast;
+      if (toast) {
+        $toast.success(toast.message, {
+          position: "top-right",
+          duration: 3000,
+        });
+      }
+    },
+    onError: (err) => {
+      console.log(err);
+    },
+  });
 };
 </script>
-<template lang="">
-    <Head title="Crea fornitore" />
-    <MainLayout>
-        <div class="d-flex justify-content-between align-items-center">
-            <h2>Crea nuovo fornitore</h2>
-            <GoBackButton />
+<template>
+  <Head title="Crea fornitore" />
+  <MainLayout>
+    <div class="d-flex justify-content-between align-items-center">
+      <h2>Crea nuovo fornitore</h2>
+      <GoBackButton />
+    </div>
+    <form @submit.prevent="handleSubmitForm">
+      <div class="row gy-4 mt-1">
+        <div class="col-12 col-md-4">
+          <label for="" class="form-label">Nome</label>
+          <input
+            type="text"
+            class="form-control"
+            :class="form.errors.name ? 'is-invalid' : ''"
+            placeholder="Inserisci nome"
+            v-model="form.name"
+          />
+          <span v-if="form.errors.name" class="text-danger"> {{ form.errors.name }}</span>
         </div>
-        <form @submit.prevent="handleSubmitForm">
-            <div class="row gy-4 mt-1">
-                <div class="col-12 col-md-4">
-                    <label for="" class="form-label">Nome</label>
-                    <input
-                        type="text"
-                        class="form-control"
-                        placeholder="Inserisci nome"
-                        v-model="form.name"
-                    />
-                </div>
-                <div class="col-12 col-md-4">
-                    <label for="" class="form-label">Email</label>
-                    <input
-                        type="email"
-                        class="form-control"
-                        placeholder="Inserisci Email"
-                        v-model="form.email"
-                    />
-                </div>
-                <div class="col-12 col-md-4">
-                    <label for="" class="form-label">Telefono</label>
-                    <input
-                        type="phone"
-                        class="form-control"
-                        placeholder="Inserisci Telefono"
-                        v-model="form.phone"
-                    />
-                </div>
-                <div class="col-12">
-                    <button class="main-button">Salva</button>
-                </div>
-            </div>
-        </form>
-    </MainLayout>
+        <div class="col-12 col-md-4">
+          <label for="" class="form-label">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            placeholder="Inserisci Email"
+            :class="form.errors.email ? 'is-invalid' : ''"
+            v-model="form.email"
+          />
+          <span v-if="form.errors.email" class="text-danger">
+            {{ form.errors.email }}</span
+          >
+        </div>
+        <div class="col-12 col-md-4">
+          <label for="" class="form-label">Telefono</label>
+          <input
+            type="phone"
+            class="form-control"
+            :class="form.errors.phone ? 'is-invalid' : ''"
+            placeholder="Inserisci Telefono"
+            v-model="form.phone"
+          />
+          <span v-if="form.errors.phone" class="text-danger">
+            {{ form.errors.phone }}</span
+          >
+        </div>
+        <div class="col-12">
+          <button class="main-button">Salva</button>
+        </div>
+      </div>
+    </form>
+  </MainLayout>
 </template>
 <style lang=""></style>

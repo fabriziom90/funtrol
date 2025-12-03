@@ -42,7 +42,7 @@ const handleDeleted = (toast) => {
 };
 </script>
 <template lang="">
-    <Head title="Amministrazione Prodotti" />
+    <Head title="Amministrazione Fornitori" />
     <MainLayout>
         <div class="my-3">
             <div class="d-flex justify-content-between align-items-center">

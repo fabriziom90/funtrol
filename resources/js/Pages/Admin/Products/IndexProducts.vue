@@ -3,68 +3,77 @@ import { Head, Link } from "@inertiajs/vue3";
 import MainLayout from "@/Layouts/MainLayout.vue";
 import GoBackButton from "@/Components/GoBackButton.vue";
 import AdminMenu from "@/Components/AdminMenu.vue";
-
+import Table from "@/Components/Table.vue";
+import ModalDelete from "@/Components/ModalDelete.vue";
 import { ref } from "vue";
-const headers = [
-    { text: "PLAYER", value: "player" },
-    { text: "TEAM", value: "team" },
-    { text: "NUMBER", value: "number" },
-    { text: "POSITION", value: "position" },
-    { text: "HEIGHT", value: "indicator.height" },
-    { text: "WEIGHT (lbs)", value: "indicator.weight", sortable: true },
-    { text: "LAST ATTENDED", value: "lastAttended", width: 200 },
-    { text: "COUNTRY", value: "country" },
-];
+import { router } from "@inertiajs/vue3";
+import { useToast } from "vue-toast-notification";
 
-const items = [
-    {
-        player: "Stephen Curry",
-        team: "GSW",
-        number: 30,
-        position: "G",
-        indicator: { height: "6-2", weight: 185 },
-        lastAttended: "Davidson",
-        country: "USA",
-    },
-    {
-        player: "Lebron James",
-        team: "LAL",
-        number: 6,
-        position: "F",
-        indicator: { height: "6-9", weight: 250 },
-        lastAttended: "St. Vincent-St. Mary HS (OH)",
-        country: "USA",
-    },
-    {
-        player: "Kevin Durant",
-        team: "BKN",
-        number: 7,
-        position: "F",
-        indicator: { height: "6-10", weight: 240 },
-        lastAttended: "Texas-Austin",
-        country: "USA",
-    },
-    {
-        player: "Giannis Antetokounmpo",
-        team: "MIL",
-        number: 34,
-        position: "F",
-        indicator: { height: "6-11", weight: 242 },
-        lastAttended: "Filathlitikos",
-        country: "Greece",
-    },
-];
+const props = defineProps({
+  products: Array,
+  columns: Array,
+});
+
+const $toast = useToast();
+
+const showModal = ref(false);
+const productToDelete = ref(null);
+
+const editProduct = (productId) => {
+  router.visit(route("admin.products.edit", productId));
+};
+
+const deleteProduct = (Product) => {
+  showModal.value = true;
+  productToDelete.value = Product;
+};
+
+const closeDeleteModal = () => {
+  productToDelete.value = null;
+  showModal.value = false;
+};
+
+const handleDeleted = (toast) => {
+  $toast.success(toast.message, {
+    position: "top-right",
+    duration: 3000,
+  });
+};
 </script>
-<template lang="">
-    <Head title="Amministrazione Prodotti" />
-    <MainLayout>
-        <div class="d-flex justify-content-between align-items-center">
-            <AdminMenu /> <GoBackButton />
-        </div>
-        <div class="d-flex justify-content-between align-items-center">
-            <h2>Gestione prodotti</h2>
-        </div>
-        <div><EasyDataTable :headers="headers" :items="items" /></div>
-    </MainLayout>
+<template>
+  <Head title="Amministrazione Prodotti" />
+  <MainLayout>
+    <div class="my-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <AdminMenu /> <GoBackButton />
+      </div>
+      <div class="d-flex justify-content-between align-items-center">
+        <h2>Gestione Prodotti</h2>
+        <Link :href="route('admin.products.create')" class="main-button">
+          Crea prodotto
+        </Link>
+      </div>
+    </div>
+    <div>
+      <Table
+        :headers="columns"
+        :items="products"
+        :show-view="false"
+        :show-edit="true"
+        :show-delete="true"
+        baseRoute="admin.products"
+        @edit="editProduct"
+        @delete="deleteProduct"
+      >
+      </Table>
+    </div>
+    <ModalDelete
+      :show="showModal"
+      :item="productToDelete"
+      baseRoute="admin.products"
+      @close="closeDeleteModal"
+      @deleted="handleDeleted"
+    />
+  </MainLayout>
 </template>
 <style lang="scss" scoped></style>
