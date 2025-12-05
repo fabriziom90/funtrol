@@ -15,8 +15,10 @@ class Product extends Model
     }
 
     // relazione con le ricette (many-to-many)
-    public function recipes()
+    public function recepies()
     {
-        return $this->belongsToMany(Recipe::class)->withPivot('quantity'); // quantity opzionale
+        return $this->belongsToMany(Recepy::class, 'product_recepy')
+            ->withPivot('grams_used');
     }
+
 }
