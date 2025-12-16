@@ -1,33 +1,35 @@
-# 1. Base image PHP con FPM e estensioni comuni per Laravel
 FROM php:8.2-fpm
 
-# 2. Install dependencies di sistema
+# System deps
 RUN apt-get update && apt-get install -y \
     libonig-dev \
     libzip-dev \
     unzip \
     git \
     curl \
+    nodejs \
+    npm \
     && docker-php-ext-install pdo_mysql mbstring zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# 3. Install Composer
+# Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# 4. Imposta working directory
 WORKDIR /var/www/html
 
-# 5. Copia il progetto
+# Copy project
 COPY . .
 
-# 6. Installa le dipendenze PHP
+# PHP deps
 RUN composer install --no-dev --optimize-autoloader
 
-# 7. Imposta permessi per storage e cache
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Frontend deps + build
+RUN npm install
+RUN npm run build
 
-# 8. Espone porta (Render la assegnerà a $PORT)
+# Permissions
+RUN chown -R www-data:www-data storage bootstrap/cache public/build
+
 EXPOSE 8000
 
-# 9. Comando per avviare Laravel
-CMD php artisan serve --host 0.0.0.0 --port 8000
+CMD php artisan serve --host=0.0.0.0 --port=8000
