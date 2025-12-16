@@ -1,8 +1,9 @@
 <script setup>
 import { Head, usePage, useForm } from "@inertiajs/vue3";
 import { ref, reactive } from "vue";
+import { useToast } from "vue-toast-notification";
 import Alert from "../Components/Alert.vue";
-import ModalEmailSupplier from "../Components/ModalEmailSupplier.vue";
+
 import MainLayout from "@/Layouts/MainLayout.vue";
 
 const props = defineProps({
@@ -12,6 +13,9 @@ const props = defineProps({
   critical_count: Number,
 });
 
+const page = usePage();
+const $toast = useToast();
+
 const productionQuantities = reactive({});
 
 props.recepies.forEach((item) => {
@@ -20,19 +24,10 @@ props.recepies.forEach((item) => {
 
 const showMessage = ref(false);
 const isLoading = ref(false);
-const isModalOpen = ref(false);
 
 const form = useForm({
   quantities: productionQuantities,
 });
-
-const showModal = () => {
-  isModalOpen.value = true;
-};
-
-const closeModal = () => {
-  isModalOpen.value = false;
-};
 
 const handleSubmit = () => {
   isLoading.value = true;
@@ -50,9 +45,20 @@ const handleSubmit = () => {
     onSuccess: (page) => {
       isLoading.value = false;
 
-      // Recupera il toast/props aggiornati dopo la richiesta
-      if (page.props.success) {
-        showMessage.value = true;
+      const toast = page.props.toast;
+
+      if (toast) {
+        if (toast.type === "success") {
+          $toast.success(toast.message, {
+            position: "top-right",
+            duration: 3000,
+          });
+        } else if (toast.type === "error") {
+          $toast.error(toast.message, {
+            position: "top-right",
+            duration: 3000,
+          });
+        }
       }
     },
     onError: () => {
@@ -105,13 +111,7 @@ const handleSubmit = () => {
           >
         </button>
       </div>
-      <Alert
-        v-if="success"
-        type="success"
-        message="Produzione registrata con successo"
-        classes="text-center fw-700"
-        :event="false"
-      />
+
       <Alert
         v-if="critical_count > 0"
         type="danger"

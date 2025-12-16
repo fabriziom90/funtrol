@@ -14,7 +14,7 @@ class ProductionController extends Controller
     {   
         $recepies = Recepy::all();
         
-        return Inertia::render('Recepies', ['recepies' => $recepies,  'success' => session('success'), 'critical_count' => session('critical_count')]);
+        return Inertia::render('Recepies', ['recepies' => $recepies,  'toast' => session('toast'), 'critical_count' => session('critical_count')]);
     }
 
     public function update(Request $request)
@@ -28,7 +28,18 @@ class ProductionController extends Controller
             $recepy = Recepy::with('products')->find($item['recepy_id']);
             $producedQuantity = $item['quantity'];
 
-            if (!$recepy) continue;
+            if (!$recepy || $producedQuantity <= 0) continue;
+
+            
+            foreach ($recepy->products as $product) {
+                $required = $product->pivot->grams_used * $producedQuantity;
+
+                if ($product->grams_in_warehouse < $required) {
+                    $insufficientRecipes[] = $recepy->name;
+                    continue 2; 
+                }
+            }
+            
 
             foreach ($recepy->products as $product) {
 
@@ -67,8 +78,16 @@ class ProductionController extends Controller
         }
 
         return redirect()->route('production.index')->with([
-            'success' => true,
-            'critical_count' => count($criticalProducts) 
+            'critical_count' => count($criticalProducts),
+            'toast' => !empty($insufficientRecipes)
+            ? [
+                'type' => 'error',
+                'message' => 'Ingredienti insufficienti per: ' . implode(', ', $insufficientRecipes)
+              ]
+            : [
+                'type' => 'success',
+                'message' => 'Produzione registrata con successo.'
+              ]
         ]);
     }
 
