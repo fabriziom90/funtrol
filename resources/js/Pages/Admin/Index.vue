@@ -1,13 +1,23 @@
 <script setup>
-import { Head, Link } from "@inertiajs/vue3";
+import { Head, Link, router } from "@inertiajs/vue3";
 import MainLayout from "@/Layouts/MainLayout.vue";
+
+const logout = () => {
+  router.post(route("logout"));
+};
 </script>
 <template>
   <Head title="Amministrazione" />
   <MainLayout>
-    <div class="d-flex align-items-center">
-      <i class="fas fa-gear fa-xl me-2"></i>
-      <h2>Area Amministrativa</h2>
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-gear fa-xl me-2"></i>
+        <h2>Area Amministrativa</h2>
+      </div>
+
+      <button class="main-button" @click="logout">
+        <i class="fas fa-right-from-bracket me-1"></i> Logout
+      </button>
     </div>
     <div class="mt-4">
       <h3>Gestione dati di base, accesso riservato:</h3>
