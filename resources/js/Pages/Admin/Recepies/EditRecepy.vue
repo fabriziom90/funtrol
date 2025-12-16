@@ -19,6 +19,7 @@ const initialIngredients = props.recepy.products.map((p) => ({
 
 const form = useForm({
   name: props.recepy.name,
+  unit: props.recepy.unit,
   description: props.recepy.description,
   price: props.recepy.price,
   ingredients: initialIngredients,
@@ -74,6 +75,19 @@ const handleSubmitForm = () => {
           />
           <div v-if="form.errors.name" class="text-danger">
             {{ form.errors.name }}
+          </div>
+        </div>
+        <div class="col-12 col-md-4">
+          <label for="" class="form-label">Unità di misura</label>
+          <input
+            type="text"
+            class="form-control"
+            :class="form.errors.unit ? 'is-invalid' : ''"
+            placeholder="Inserisci unità di misura"
+            v-model="form.unit"
+          />
+          <div v-if="form.errors.unit" class="text-danger">
+            {{ form.errors.unit }}
           </div>
         </div>
         <div class="col-12 col-md-4">

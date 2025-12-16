@@ -43,6 +43,7 @@ class RecepyController extends Controller
         
         $newRecepy = new Recepy();
         $newRecepy->name = $form_data['name'];
+        $newRecepy->unit = $form_data['unit'];
         $newRecepy->description = $form_data['description'];
         $newRecepy->price = $form_data['price'];
 
@@ -87,6 +88,7 @@ class RecepyController extends Controller
         $form_data = $request->validated();
 
         $recepy->name = $form_data['name'];
+        $recepy->name = $form_data['unit'];
         $recepy->description = $form_data['description'];
         $recepy->price = $form_data['price'];
         // dd($form_data);

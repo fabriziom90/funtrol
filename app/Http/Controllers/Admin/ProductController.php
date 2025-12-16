@@ -24,7 +24,7 @@ class ProductController extends Controller
                 ['text' => 'Nome', 'value' => 'name'],
                 ['text' => 'Prezzo', 'value' => 'price'],
                 ['text' => 'Fornitore', 'value' => 'supplier'],
-                ['text' => 'Quantità (gr) in magazzino', 'value' => 'grams_in_warehouse'],
+                ['text' => 'Quantità in magazzino', 'value' => 'grams_in_warehouse'],
             ],
             'toast' => session('toast')]
         );
@@ -51,6 +51,7 @@ class ProductController extends Controller
         $newProduct->price = $form_data['price'];
         $newProduct->supplier_id = $form_data['supplier_id'];
         $newProduct->grams_in_warehouse = $form_data['grams_in_warehouse'];
+        $newProduct->unit = $form_data['unit'];
 
         $newProduct->save();
 
@@ -90,6 +91,7 @@ class ProductController extends Controller
         $product->price = $form_data['price'];
         $product->supplier_id = $form_data['supplier_id'];
         $product->grams_in_warehouse = $form_data['grams_in_warehouse'];
+        $product->unit = $form_data['unit'];
 
         $product->save();
 

@@ -1,164 +1,152 @@
 <script setup>
-import { ref, defineEmits } from "vue";
+import { ref, defineEmits, computed } from "vue";
+import { router } from "@inertiajs/vue3";
+import { useToast } from "vue-toast-notification";
 
-defineProps({
-    showModal: Boolean,
+const props = defineProps({
+  showModal: Boolean,
+  product: Object,
+  allProducts: Array,
 });
+
+const $toast = useToast();
 
 const emit = defineEmits(["close"]);
 
+const supplierProducts = computed(() => {
+  if (!props.product) return [];
+
+  return props.allProducts.filter((p) => p.supplier_id === props.product.supplier_id);
+});
+
+const lowStockProducts = computed(() => {
+  return supplierProducts.value.filter((p) => p.grams_in_warehouse < p.min_stock);
+});
+
+const mailBody = computed({
+  get() {
+    if (!props.product) return "";
+
+    if (lowStockProducts.value.length === 0) {
+      return "";
+    }
+
+    const supplierName = props.product.supplier.name;
+
+    let lines = `Gentile ${supplierName},\n`;
+    lines += `Si richiede il riordino urgente dei seguenti prodotti:\n`;
+
+    lowStockProducts.value.forEach((p) => {
+      const toOrder = Math.max(p.min_stock - p.grams_in_warehouse, 0);
+      const unit = p.unit ?? "g";
+
+      lines += `- ${p.name} (${toOrder}${unit} necessari)\n`;
+    });
+
+    lines += `\nCordiali Saluti,\nFunTrol Operatore`;
+
+    return lines;
+  },
+  set() {},
+});
+
 const isLoading = ref(false);
 
-const email = ref(
-    "Gentile Fornitore,\nSi richiede il riordino urgente dei seguenti prodotti:\n- Mozzarella (quantità da definire)\n- Farina Integrale (quantità da definire)\n- Mozzarella (quantità da definire)\n- Cioccolato (quantità da definire)\nCordiali Saluti,\nFunTrol Operatore"
-);
-
 const handleSubmit = () => {
-    isLoading.value = true;
-    setTimeout(() => {
+  isLoading.value = true;
+  router.post(
+    route("warehouse.send-supplier-mail"),
+    {
+      to: props.product.supplier.email,
+      subject: "Ordine urgente prodotti",
+      body: mailBody.value,
+    },
+    {
+      preserveScroll: true,
+      onSuccess: () => {
         isLoading.value = false;
+        $toast.success("Email inviata con successo!", {
+          position: "top-right",
+          duration: 3000,
+        });
         emit("close");
-    }, 1500);
+      },
+      onError: () => {
+        isLoading.value = false;
+      },
+    }
+  );
 };
 </script>
-<template lang="">
-    <transition name="modal">
-        <div class="modal-mask">
-            <div class="modal-wrapper">
-                <div class="modal-container">
-                    <div class="modal-header">
-                        <h2>
-                            <i
-                                class="fa-solid fa-triangle-exclamation fa-2xl me-2"
-                            ></i
-                            >Avviso Scorte sotto soglia
-                        </h2>
-                    </div>
-                    <div class="modal-body">
-                        La produzione giornaliera ha portato i seguenti 3
-                        prodotti sotto la soglia minima di riordino:
-                        <div class="alert alert-danger mt-2">
-                            <ul class="list-unstyled m-0">
-                                <li
-                                    class="d-flex justify-content-between align-items-center"
-                                >
-                                    <span>Mozzarella</span
-                                    ><strong>11.95kg</strong>
-                                </li>
-                                <li
-                                    class="d-flex justify-content-between align-items-center"
-                                >
-                                    <span>Farina Integrale</span
-                                    ><strong>80kg</strong>
-                                </li>
-                                <li
-                                    class="d-flex justify-content-between align-items-center"
-                                >
-                                    <span>Cioccolato</span><strong>5kg</strong>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="textarea-container">
-                            <textarea
-                                name=""
-                                id=""
-                                class="form-control"
-                                v-model="email"
-                                rows="10"
-                            ></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button
-                            class="secondary-button me-2"
-                            @click="$emit('close')"
-                        >
-                            Annulla
-                        </button>
-                        <button class="main-button" @click="handleSubmit">
-                            <span v-if="!isLoading"
-                                ><i class="fa-regular fa-paper-plane"></i>Invia
-                                Ordine
-                            </span>
-                            <span v-else>
-                                <i class="fa-solid fa-circle-notch fa-spin"></i
-                                >Invio...</span
-                            >
-                        </button>
-                    </div>
-                </div>
+<template>
+  <transition name="modal">
+    <div class="modal-mask">
+      <div class="modal-wrapper">
+        <div class="modal-container">
+          <div class="modal-header">
+            <h2>
+              <i class="fa-solid fa-triangle-exclamation fa-2xl me-2"></i>Ordina prodotti
+            </h2>
+          </div>
+          <div class="modal-body">
+            {{
+              lowStockProducts.length > 0
+                ? "La produzione giornaliera ha portato i seguenti prodotti sotto la soglia minima di riordino per il corrispettivo fornitore:"
+                : ""
+            }}
+            <div class="alert alert-danger mt-2" v-if="lowStockProducts.length > 0">
+              <ul class="list-unstyled m-0">
+                <li
+                  v-for="p in lowStockProducts"
+                  :key="p.id"
+                  class="d-flex justify-content-between align-items-center"
+                >
+                  <span>{{ p.name }}</span>
+                  <strong>
+                    {{ p.grams_in_warehouse }}{{ p.unit }} (soglia: {{ p.min_stock
+                    }}{{ p.unit }})
+                  </strong>
+                </li>
+              </ul>
             </div>
+            <div class="textarea-container">
+              <textarea
+                name=""
+                id=""
+                class="form-control"
+                v-model="mailBody"
+                rows="10"
+              ></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="secondary-button me-2" @click="$emit('close')">Annulla</button>
+            <button class="main-button" @click="handleSubmit" :disabled="isLoading">
+              <span v-if="!isLoading"
+                ><i class="fa-regular fa-paper-plane"></i>Invia Ordine
+              </span>
+              <span v-else>
+                <i class="fa-solid fa-circle-notch fa-spin"></i>Invio...</span
+              >
+            </button>
+          </div>
         </div>
-    </transition>
+      </div>
+    </div>
+  </transition>
 </template>
 <style lang="scss" scoped>
 @use "../../scss/app.scss";
 @use "../../scss/_partials/variables" as *;
 .modal-header {
-    color: $mainRed;
+  color: $mainRed;
 
-    h2 {
-        font-size: 20px;
-    }
+  h2 {
+    font-size: 20px;
+  }
 }
 
 .list-unstyled strong {
-    color: $mainRed;
-}
-
-.modal-mask {
-    position: fixed;
-    z-index: 9998;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: table;
-    transition: opacity 0.3s ease;
-}
-
-.modal-wrapper {
-    display: table-cell;
-    vertical-align: middle;
-}
-
-.modal-container {
-    width: 750px;
-    max-width: 600px;
-    margin: 0px auto;
-    padding: 45px;
-    background-color: #fff;
-    border-radius: 2px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
-    transition: all 0.3s ease;
-    border-radius: 25px;
-}
-
-.modal-header h3 {
-    margin-top: 0;
-    color: #42b983;
-}
-
-.modal-body {
-    margin: 20px 0;
-}
-
-.modal-default-button {
-    float: right;
-}
-
-.modal-enter {
-    opacity: 0;
-}
-
-.modal-leave-active {
-    opacity: 0;
-}
-
-.modal-enter .modal-container,
-.modal-leave-active .modal-container {
-    -webkit-transform: scale(1.1);
-    transform: scale(1.1);
+  color: $mainRed;
 }
 </style>

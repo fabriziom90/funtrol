@@ -17,6 +17,7 @@ const form = useForm({
   price: props.product.price,
   supplier_id: props.product.supplier_id,
   grams_in_warehouse: props.product.grams_in_warehouse,
+  unit: props.product.unit,
 });
 
 const handleSubmitForm = () => {
@@ -101,6 +102,19 @@ const handleSubmitForm = () => {
           />
           <div v-if="form.errors.grams_in_warehouse" class="text-danger">
             {{ form.errors.grams_in_warehouse }}
+          </div>
+        </div>
+        <div class="col-12 col-md-4">
+          <label for="" class="form-label">Unità di misura</label>
+          <input
+            type="text"
+            class="form-control"
+            :class="form.errors.unit ? 'is-invalid' : ''"
+            placeholder="Inserisci unità di misura (es. pezzi, litri)"
+            v-model="form.unit"
+          />
+          <div v-if="form.errors.unit" class="text-danger">
+            {{ form.errors.unit }}
           </div>
         </div>
         <div class="col-12">

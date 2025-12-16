@@ -33,7 +33,14 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+
             ],
+            [
+                'toast' => fn () => $request->session()->get('message'),
+                'success' => fn () => $request->session()->get('success'),
+                'critical_count' => fn () => $request->session()->get('critical_count', 0),
+                'critical_products' => fn () => $request->session()->get('critical_products', []),
+            ]
         ];
     }
 }

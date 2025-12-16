@@ -65,7 +65,7 @@ const filteredItems = computed(() => {
             </span>
             <span v-else>
               {{ item[header.value] }}
-              {{ header.value === "price" ? "€" : "" }}
+              {{ header.value === "price" ? "€" : item.unit ? item.unit : "" }}
             </span>
           </td>
           <td v-if="showActions">

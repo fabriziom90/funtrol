@@ -12,6 +12,7 @@ const props = defineProps({
 const $toast = useToast();
 const form = useForm({
   name: "",
+  unit: "",
   description: "",
   price: "",
   ingredients: [{ product_id: "", grams: "" }],
@@ -66,6 +67,19 @@ const handleSubmitForm = () => {
           />
           <div v-if="form.errors.name" class="text-danger">
             {{ form.errors.name }}
+          </div>
+        </div>
+        <div class="col-12 col-md-4">
+          <label for="" class="form-label">Unità di misura</label>
+          <input
+            type="text"
+            class="form-control"
+            :class="form.errors.unit ? 'is-invalid' : ''"
+            placeholder="Inserisci unità di misura (es. pezzi, litri)"
+            v-model="form.unit"
+          />
+          <div v-if="form.errors.unit" class="text-danger">
+            {{ form.errors.unit }}
           </div>
         </div>
         <div class="col-12 col-md-4">

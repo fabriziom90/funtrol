@@ -23,9 +23,9 @@ const editProduct = (productId) => {
   router.visit(route("admin.products.edit", productId));
 };
 
-const deleteProduct = (Product) => {
+const deleteProduct = (product) => {
   showModal.value = true;
-  productToDelete.value = Product;
+  productToDelete.value = product;
 };
 
 const closeDeleteModal = () => {
