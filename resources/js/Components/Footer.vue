@@ -15,25 +15,25 @@ const isRouteActive = (route) => {
           <ul class="d-flex justify-content-center align-items-center">
             <li :class="isRouteActive('/production') ? 'active' : ''">
               <Link :href="route('production.index')">
-                <i class="fas fa-utensils fa-2xl"></i>
+                <i class="fas fa-utensils"></i>
                 <span>Produzione</span>
               </Link>
             </li>
             <li :class="isRouteActive('/warehouse') ? 'active' : ''">
               <Link :href="route('warehouse.index')">
-                <i class="fa-solid fa-warehouse fa-2xl"></i>
+                <i class="fa-solid fa-warehouse"></i>
                 <span>Magazzino</span>
               </Link>
             </li>
             <li :class="isRouteActive('/calendar') ? 'active' : ''">
               <Link :href="route('calendar.index')">
-                <i class="fa-solid fa-calendar-days fa-2xl"></i>
+                <i class="fa-solid fa-calendar-days"></i>
                 <span>Calendario</span>
               </Link>
             </li>
             <li :class="isRouteActive('/admin') ? 'active' : ''">
               <Link :href="route('admin.administration.index')">
-                <i class="fas fa-gear fa-2xl"></i>
+                <i class="fas fa-gear"></i>
                 <span>Amministrazione</span>
               </Link>
             </li>
@@ -55,8 +55,12 @@ footer {
   border-top: 1px solid #c7c7c7;
   background-color: #fff;
   z-index: 80;
+  ul {
+    max-width: 100%;
+  }
   li {
     padding: 20px;
+    min-width: 60px;
     text-align: center;
 
     &.active {
@@ -69,10 +73,29 @@ footer {
 
     a {
       color: grey;
+      i {
+        font-size: 2.5rem;
+      }
     }
     span {
       display: block;
       padding-top: 10px;
+    }
+  }
+}
+
+// media query per schermi molto piccoli
+@media (max-width: 768px) {
+  footer {
+    li {
+      padding: 8px;
+
+      a {
+        font-size: 10px;
+        i {
+          font-size: 1.2rem; // icone più piccole su schermi stretti
+        }
+      }
     }
   }
 }

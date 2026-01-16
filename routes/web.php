@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\AdministrationController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\RecepyController;
+use App\Http\Controllers\Admin\OrderController;
 
 
 /*
@@ -31,6 +32,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::resource('suppliers', SupplierController::class);
             Route::resource('products', ProductController::class);
             Route::resource('recepies', RecepyController::class);
+            Route::resource('orders', OrderController::class);
             Route::get('/administration', [AdministrationController::class, 'index'])->name('administration.index');
         });
     });

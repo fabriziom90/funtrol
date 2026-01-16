@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Models\Order;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
+use App\Http\Controllers\Controller;
+use Inertia\Inertia;
 
 class OrderController extends Controller
 {
@@ -13,7 +15,17 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        $orders = Order::with(['products', 'supplier'])->orderBy('date_order')->get();
+
+        return Inertia::render('Admin/Orders/IndexOrders', [
+            'orders' => $orders, 
+            'columns' => [
+                ['text' => 'ID', 'value' => 'id'],
+                ['text' => 'Fornitore', 'value' => 'supplier'],
+                ['text' => 'Prodotti', 'value' => 'products'],
+                ['text' => 'Totale', 'value' => 'total'],
+            ],
+            'toast' => session('toast')]);
     }
 
     /**
@@ -61,6 +73,13 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        //
+        $order->delete();
+
+        return redirect()->route('admin.orders.index')->with([
+            'toast' => [
+                'type' => 'success',
+                'message' => 'Ordine cancellato con successo'
+            ]
+        ]);
     }
 }

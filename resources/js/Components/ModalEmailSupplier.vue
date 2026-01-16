@@ -73,7 +73,7 @@ const handleSubmit = () => {
     $toast.error("Inserisci una quantità valida per tutti i prodotti");
     return;
   }
-  // isLoading.value = true;
+  isLoading.value = true;
   router.post(
     route("warehouse.send-supplier-mail"),
     {

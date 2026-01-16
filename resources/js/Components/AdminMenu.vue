@@ -30,7 +30,12 @@ const isRouteActive = (route) => {
     >
       Gestione Fornitori
     </Link>
-    <Link class="link-section"> Storico Prezzi </Link>
+    <Link
+      class="link-section"
+      :href="route('admin.orders.index')"
+      :class="isRouteActive('/orders') ? 'active' : ''"
+      >Storico Ordini</Link
+    >
   </div>
 </template>
 <style lang="scss" scoped>

@@ -14,4 +14,24 @@ class Order extends Model
         'total',
         'date_order',
     ];
+
+    
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
+    }
+
+    
+    public function productOrdereds()
+    {
+        return $this->hasMany(ProductOrdered::class);
+    }
+
+    
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'product_ordereds')
+            ->withPivot(['quantity', 'unit_price'])
+            ->withTimestamps();
+    }
 }

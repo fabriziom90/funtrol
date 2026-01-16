@@ -63,9 +63,35 @@ const filteredItems = computed(() => {
             <span v-if="header.value === 'supplier'">
               {{ item[header.value].name }}
             </span>
+            <div v-else-if="header.value === 'products'">
+              <table id="order-products-table" class="table">
+                <thead>
+                  <th>Prodotto</th>
+                  <th>Prezzo al kg</th>
+                  <th>Quantità ordinata</th>
+                  <th>Totale prodotto</th>
+                </thead>
+                <tbody>
+                  <tr v-for="product in item[header.value]" :key="product.id">
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.price }}€/kg</td>
+                    <td>{{ product.pivot.quantity }}g</td>
+                    <td>
+                      {{ ((product.pivot.quantity * product.price) / 1000).toFixed(2) }}€
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
             <span v-else>
               {{ item[header.value] }}
-              {{ header.value === "price" ? "€" : item.unit ? item.unit : "" }}
+              {{
+                header.value === "price" || header.value === "total"
+                  ? "€"
+                  : item.unit
+                  ? item.unit
+                  : ""
+              }}
             </span>
           </td>
           <td v-if="showActions">
@@ -108,6 +134,24 @@ thead {
   th {
     background-color: $mainBlue;
     color: #fff;
+  }
+}
+
+#order-products-table {
+  thead {
+    th {
+      background-color: grey;
+    }
+  }
+}
+
+.table.table-striped.table-bordered {
+  tr:nth-child(2n + 1) {
+    #order-products-table {
+      td {
+        background-color: #f2f2f2;
+      }
+    }
   }
 }
 </style>

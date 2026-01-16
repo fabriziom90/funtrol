@@ -66,7 +66,7 @@ class CalendarController extends Controller
             $totalAfter  = $details->sum('after_quantity');
             
             return [
-                'id'    => $first->id,
+                'id'    => 'movement-'.$first->id,
                 'start' => $first->date,
                 'end'   => $first->date,
                 'title' => 'Registrazione ' . ($first->recepy_name ?? 'Manuale'),
@@ -77,10 +77,60 @@ class CalendarController extends Controller
         ->values()
         ->toArray();
 
+        // orders
+        $orders = DB::table('orders as o')
+            ->join('suppliers as s', 'o.supplier_id', '=', 's.id')
+            ->join('product_ordereds as po', 'po.order_id', '=', 'o.id')
+            ->join('products as p', 'po.product_id', '=', 'p.id')
+            ->select(
+                'o.id',
+                'o.date_order',
+                's.name as supplier_name',
+                'p.name as product_name',
+                'po.quantity',
+                'po.unit_price'
+            )
+            ->orderBy('o.date_order')
+            ->get()
+            ->groupBy('id');
+
+        $orderEvents = $orders->map(function ($group) {
+
+            $first = $group->first();
+
+            $details = $group->map(function ($row) {
+                $spent = ($row->quantity / 1000) * $row->unit_price;
+
+                return [
+                    'product' => $row->product_name,
+                    'quantity' => $row->quantity,
+                    'before_quantity' => null,
+                    'after_quantity' => null,
+                    'spent' => round($spent, 2),
+                    'row_class' => 'row-in',
+                ];
+            })->values();
+
+            return [
+                'id'    => '' . $first->id,
+                'start' => $first->date_order,
+                'end'   => $first->date_order,
+                'title' => 'Ordine fornitore ' . $first->supplier_name,
+                'class' => 'event-order',
+                'details' => $details,
+            ];
+        });
+
         // dump($warehouseMovements);
-        
+        $calendarEvents = collect($warehouseMovements)
+            ->merge($orderEvents)
+            ->sortBy('start')
+            ->values()
+            ->toArray();
+
         return Inertia::render('Calendar', [
-            'warehouseMovements' => $warehouseMovements
+            'warehouseMovements' => $calendarEvents
         ]);
+        
     }
 }

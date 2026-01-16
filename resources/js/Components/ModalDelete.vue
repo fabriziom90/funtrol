@@ -3,87 +3,79 @@ import { ref } from "vue";
 import { router } from "@inertiajs/vue3";
 
 const props = defineProps({
-    show: Boolean,
-    item: Object,
-    baseRoute: String,
+  show: Boolean,
+  item: Object,
+  baseRoute: String,
 });
 
 const emit = defineEmits(["close", "deleted"]);
 
 const confirmDelete = () => {
-    if (!props.item) return;
+  if (!props.item) return;
 
-    router.delete(route(`${props.baseRoute}.destroy`, props.item.id), {
-        preserveScroll: true,
-        onSuccess: (page) => {
-            emit("deleted", page.props.toast);
-            emit("close");
-        },
-        onError: (err) => {
-            console.error(err);
-        },
-    });
+  router.delete(route(`${props.baseRoute}.destroy`, props.item.id), {
+    preserveScroll: true,
+    onSuccess: (page) => {
+      emit("deleted", page.props.toast);
+      emit("close");
+    },
+    onError: (err) => {
+      console.error(err);
+    },
+  });
 };
 
 const displayName = (item) => {
-    if (!item) return "";
+  if (!item) return "";
 
-    // caso pazienti, medici, infermieri
-    if (item.name && item.surname) {
-        return `${item.name} ${item.surname}`;
-    }
+  // caso pazienti, medici, infermieri
+  if (item.name && item.surname) {
+    return `${item.name} ${item.surname}`;
+  }
 
-    // caso entità con solo 'name'
-    if (item.name) {
-        return item.name;
-    }
+  // caso entità con solo 'name'
+  if (item.name) {
+    return item.name;
+  }
 
-    // fallback: mostra eventuale titolo, email, ecc.
-    if (item.title) return item.title;
-    if (item.email) return item.email;
+  // fallback: mostra eventuale titolo, email, ecc.
+  if (item.title) return item.title;
+  if (item.email) return item.email;
 
-    // altrimenti solo ID
-    return `#${item.id}`;
+  // altrimenti solo ID
+  return `#${item.id}`;
 };
 </script>
 
 <template>
-    <div v-if="show" class="modal fade show modal-bg" style="display: block">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Conferma eliminazione</h5>
-                    <button
-                        type="button"
-                        class="btn-close"
-                        @click="$emit('close')"
-                    ></button>
-                </div>
-                <div class="modal-body">
-                    <p>Vuoi davvero eliminare "{{ displayName(item) }}"?</p>
-                </div>
-                <div class="modal-footer">
-                    <button class="secondary-button" @click="$emit('close')">
-                        Annulla
-                    </button>
-                    <button class="main-button" @click="confirmDelete">
-                        Elimina
-                    </button>
-                </div>
-            </div>
+  <div v-if="show" class="modal fade show modal-bg" style="display: block">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Conferma eliminazione</h5>
+          <button type="button" class="btn-close" @click="$emit('close')"></button>
         </div>
+        <div class="modal-body">
+          <p>Vuoi davvero eliminare {{ displayName(item) }}?</p>
+        </div>
+        <div class="modal-footer">
+          <button class="secondary-button" @click="$emit('close')">Annulla</button>
+          <button class="main-button" @click="confirmDelete">Elimina</button>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 <style lang="scss" scoped>
 @use "../../scss/app.scss";
 @use "../../scss/_partials/variables" as *;
 
 .modal-bg {
-    background-color: rgba(0, 0, 0, 0.39);
+  background-color: rgba(0, 0, 0, 0.39);
 
-    .modal-header {
-        background-color: $mainBlue;
-        color: #fff;
-    }
+  .modal-header {
+    background-color: $mainBlue;
+    color: #fff;
+  }
 }
 </style>

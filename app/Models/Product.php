@@ -25,4 +25,16 @@ class Product extends Model
         return $this->hasMany(warehouseMovements::class);
     }
 
+    public function productOrdereds()
+    {
+        return $this->hasMany(ProductOrdered::class);
+    }
+
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class, 'product_ordereds')
+            ->withPivot(['quantity', 'unit_price'])
+            ->withTimestamps();
+    }
+
 }

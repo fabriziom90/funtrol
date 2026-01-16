@@ -148,6 +148,7 @@ h2 {
   border-collapse: collapse;
   margin-top: 10px;
 }
+
 .modal-content th,
 .modal-content td {
   border: 1px solid #ccc;

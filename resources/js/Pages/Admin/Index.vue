@@ -32,7 +32,9 @@ const logout = () => {
       <Link :href="route('admin.suppliers.index')" class="card-section">
         Gestione Fornitori
       </Link>
-      <Link class="card-section"> Storico Prezzi </Link>
+      <Link :href="route('admin.orders.index')" class="card-section">
+        Gestione Ordini
+      </Link>
     </div>
   </MainLayout>
 </template>
