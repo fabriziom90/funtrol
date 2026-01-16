@@ -13,4 +13,8 @@ class Recepy extends Model
     {
         return $this->belongsToMany(Product::class)->withPivot('grams_used');
     }
+
+    public function warehouseMovements(){
+        return $this->hasMany(warehouseMovements::class);
+    }
 }

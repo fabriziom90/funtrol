@@ -11,7 +11,7 @@ class UpdateOrderRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,29 @@ class UpdateOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'products' => ['required', 'array', 'min:1'],
+
+            'products.*.id' => [
+                'nullable',
+                'exists:product_ordereds,id'
+            ],
+
+            'products.*.product_id' => [
+                'required',
+                'exists:products,id',
+            ],
+
+            'products.*.quantity' => [
+                'required',
+                'numeric',
+                'min:1'
+            ],
+
+            'products.*.unit_price' => [
+                'required',
+                'numeric',
+                'min:0'
+            ],
         ];
     }
 }

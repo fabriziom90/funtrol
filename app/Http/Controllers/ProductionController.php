@@ -36,7 +36,18 @@ class ProductionController extends Controller
 
                 if ($product->grams_in_warehouse < $required) {
                     $insufficientRecipes[] = $recepy->name;
-                    continue 2; 
+                    return redirect()->route('production.index')->with([
+                        'critical_count' => count($criticalProducts),
+                        'toast' => !empty($insufficientRecipes)
+                        ? [
+                            'type' => 'error',
+                            'message' => 'Ingredienti insufficienti per: ' . implode(', ', $insufficientRecipes)
+                        ]
+                        : [
+                            'type' => 'success',
+                            'message' => 'Produzione registrata con successo.'
+                        ]
+                    ]);
                 }
             }
             

@@ -26,7 +26,7 @@ const isRouteActive = (route) => {
               </Link>
             </li>
             <li :class="isRouteActive('/calendar') ? 'active' : ''">
-              <Link to="/calendar">
+              <Link :href="route('calendar.index')">
                 <i class="fa-solid fa-calendar-days fa-2xl"></i>
                 <span>Calendario</span>
               </Link>

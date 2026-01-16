@@ -70,7 +70,7 @@ ul{
 
 .modal-container {
     width: 750px;
-    max-width: 600px;
+    max-width: 700px;
     margin: 0px auto;
     padding: 45px;
     background-color: #fff;
@@ -105,4 +105,14 @@ ul{
 .modal-leave-active .modal-container {
     -webkit-transform: scale(1.1);
     transform: scale(1.1);
+}
+
+.vuecal--default-theme .vuecal__event.event-out {
+  background-color: #f56565;
+  color: white;
+}
+
+.vuecal--default-theme .vuecal__event.event-in {
+  background-color: #48bb78;
+  color: white;
 }

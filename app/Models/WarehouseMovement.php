@@ -20,4 +20,12 @@ class WarehouseMovement extends Model
         'note',
         'user_id',
     ];
+
+    public function product(){
+        return $this->belongsTo(Product::class, 'product_id');
+    }
+
+    public function recepy(){
+        return $this->belongsTo(Recepy::class, 'recepy_id');
+    }
 }

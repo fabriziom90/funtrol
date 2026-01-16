@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineEmits, computed } from "vue";
+import { ref, defineEmits, computed, watchEffect, watch } from "vue";
 import { router } from "@inertiajs/vue3";
 import { useToast } from "vue-toast-notification";
 
@@ -7,59 +7,85 @@ const props = defineProps({
   showModal: Boolean,
   product: Object,
   allProducts: Array,
+  authUser: Object,
 });
 
 const $toast = useToast();
 
 const emit = defineEmits(["close"]);
 
-const supplierProducts = computed(() => {
-  if (!props.product) return [];
-
-  return props.allProducts.filter((p) => p.supplier_id === props.product.supplier_id);
-});
+const supplierProducts = ref([]);
+const mailPreview = ref("");
 
 const lowStockProducts = computed(() => {
   return supplierProducts.value.filter((p) => p.grams_in_warehouse < p.min_stock);
 });
 
-const mailBody = computed({
-  get() {
-    if (!props.product) return "";
-
-    if (lowStockProducts.value.length === 0) {
-      return "";
-    }
-
-    const supplierName = props.product.supplier.name;
-
-    let lines = `Gentile ${supplierName},\n`;
-    lines += `Si richiede il riordino urgente dei seguenti prodotti:\n`;
-
-    lowStockProducts.value.forEach((p) => {
-      const toOrder = Math.max(p.min_stock - p.grams_in_warehouse, 0);
-      const unit = p.unit ?? "g";
-
-      lines += `- ${p.name} (${toOrder}${unit} necessari)\n`;
-    });
-
-    lines += `\nCordiali Saluti,\nFunTrol Operatore`;
-
-    return lines;
-  },
-  set() {},
+const isFormValid = computed(() => {
+  return lowStockProducts.value.every(
+    (p) => Number.isInteger(p.qty_to_order) && p.qty_to_order > 0
+  );
 });
+
+watchEffect(() => {
+  if (!props.product) return;
+
+  supplierProducts.value = props.allProducts
+    .filter((p) => p.supplier_id === props.product.supplier_id)
+    .map((p) => ({
+      ...p,
+      qty_to_order: Math.max(p.min_stock - p.grams_in_warehouse, 0),
+    }));
+});
+
+watchEffect(() => {
+  if (!props.product || lowStockProducts.value.length === 0) return;
+
+  let text = `Gentile ${props.product.supplier.name},\n`;
+  text += `Si richiede il riordino urgente dei seguenti prodotti:\n`;
+
+  lowStockProducts.value.forEach((p) => {
+    text += `- ${p.name}: ${p.qty_to_order} g\n`;
+  });
+
+  text += `\nCordiali saluti,\n${props.authUser.name}`;
+
+  mailPreview.value = text;
+});
+
+// watch(
+//   () => lowStockProducts.value.map((p) => p.qty_to_order),
+//   () => {
+//     let text = `Gentile ${props.product.supplier.name},\n`;
+//     text += `Si richiede il riordino urgente dei seguenti prodotti:\n`;
+//     lowStockProducts.value.forEach((p) => {
+//       text += `- ${p.name}: ${p.qty_to_order} g\n`;
+//     });
+//     text += `\nCordiali saluti,\n${props.authUser.name}`;
+//     mailPreview.value = text;
+//   }
+// );
 
 const isLoading = ref(false);
 
 const handleSubmit = () => {
-  isLoading.value = true;
+  if (!isFormValid.value) {
+    $toast.error("Inserisci una quantità valida per tutti i prodotti");
+    return;
+  }
+  // isLoading.value = true;
   router.post(
     route("warehouse.send-supplier-mail"),
     {
+      supplier_id: props.product.supplier_id,
       to: props.product.supplier.email,
-      subject: "Ordine urgente prodotti",
-      body: mailBody.value,
+      subject: "Ordine prodotti",
+      body: mailPreview.value,
+      products: lowStockProducts.value.map((p) => ({
+        product_id: p.id,
+        unit_price: p.price,
+        quantity: p.qty_to_order,
+      })),
     },
     {
       preserveScroll: true,
@@ -99,23 +125,33 @@ const handleSubmit = () => {
                 <li
                   v-for="p in lowStockProducts"
                   :key="p.id"
-                  class="d-flex justify-content-between align-items-center"
+                  class="d-flex justify-content-between align-items-center my-3"
                 >
                   <span>{{ p.name }}</span>
                   <strong>
                     {{ p.grams_in_warehouse }}{{ p.unit }} (soglia: {{ p.min_stock
                     }}{{ p.unit }})
                   </strong>
+                  <input
+                    type="number"
+                    min="0"
+                    :placeholder="`Quantità ${p.name}`"
+                    class="form-control w-50"
+                    v-model="p.qty_to_order"
+                    required
+                  />
                 </li>
               </ul>
             </div>
             <div class="textarea-container">
+              <label for="">Anteprima email (generata automaticamente)</label>
               <textarea
                 name=""
                 id=""
-                class="form-control"
-                v-model="mailBody"
+                class="form-control readonly-preview"
+                :value="mailPreview"
                 rows="10"
+                readonly
               ></textarea>
             </div>
           </div>
@@ -148,5 +184,10 @@ const handleSubmit = () => {
 
 .list-unstyled strong {
   color: $mainRed;
+}
+
+.readonly-preview {
+  background-color: #e9ecef;
+  cursor: not-allowed;
 }
 </style>

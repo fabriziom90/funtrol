@@ -21,4 +21,8 @@ class Product extends Model
             ->withPivot('grams_used');
     }
 
+    public function warehouseMovements(){
+        return $this->hasMany(warehouseMovements::class);
+    }
+
 }

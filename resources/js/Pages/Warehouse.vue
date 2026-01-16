@@ -7,6 +7,7 @@ import ModalUpdateQuantity from "@/Components/ModalUpdateQuantity.vue";
 
 const props = defineProps({
   products: Array,
+  authUser: Object,
 });
 
 const search = ref("");
@@ -112,6 +113,7 @@ const closeModal = () => {
       v-if="modalEmailSupplierOpen"
       :product="selectedProduct"
       :allProducts="props.products"
+      :authUser="props.authUser"
       @close="closeModal"
     />
     <ModalUpdateQuantity

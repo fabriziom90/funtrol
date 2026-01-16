@@ -20,7 +20,7 @@
     "dependencies": {
         "@fortawesome/fontawesome-free": "^7.1.0",
         "bootstrap": "^5.3.8",
-        "vue-cal": "^4.10.2",
+        "vue-cal": "^5.0.1-rc.34",
         "vue-toast-notification": "^3.1.3"
     }
 }

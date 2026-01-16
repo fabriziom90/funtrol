@@ -49,7 +49,7 @@ const handleDeleted = (toast) => {
       </div>
       <div class="d-flex justify-content-between align-items-center">
         <h2>Gestione Prodotti</h2>
-        <Link :href="route('admin.recepies.create')" class="main-button">
+        <Link :href="route('admin.products.create')" class="main-button">
           Crea prodotto
         </Link>
       </div>

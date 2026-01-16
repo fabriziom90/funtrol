@@ -5,11 +5,11 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\WarehouseController;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\Admin\AdministrationController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\RecepyController;
-// use App\Http\Controllers\Admin\ProductController;
 
 
 /*
@@ -41,6 +41,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/warehouse/send-supplier-mail', [WarehouseController::class, 'sendSupplierEmail'])
     ->name('warehouse.send-supplier-mail');
     Route::put('/warehouse/update-product-quantity', [WarehouseController::class, 'updateProductQuantity'])->name('warehouse.update-product-quantity');
+    Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
     // Route::resource('ricette', RicettaController::class);
     // Route::resource('movimenti', MovimentoMagazzinoController::class);
     // Route::resource('ordini', OrdineController::class);
