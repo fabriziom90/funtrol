@@ -53,19 +53,6 @@ watchEffect(() => {
   mailPreview.value = text;
 });
 
-// watch(
-//   () => lowStockProducts.value.map((p) => p.qty_to_order),
-//   () => {
-//     let text = `Gentile ${props.product.supplier.name},\n`;
-//     text += `Si richiede il riordino urgente dei seguenti prodotti:\n`;
-//     lowStockProducts.value.forEach((p) => {
-//       text += `- ${p.name}: ${p.qty_to_order} g\n`;
-//     });
-//     text += `\nCordiali saluti,\n${props.authUser.name}`;
-//     mailPreview.value = text;
-//   }
-// );
-
 const isLoading = ref(false);
 
 const handleSubmit = () => {

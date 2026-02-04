@@ -12,6 +12,12 @@ const props = defineProps({
 const movements = ref([]);
 const showModal = ref(false);
 const selectedEvent = ref(null);
+const isMobile = ref(true);
+
+watchEffect(() => {
+  isMobile.value = window.innerWidth < 768;
+  console.log(isMobile.value);
+});
 
 watchEffect(() => {
   movements.value = props.warehouseMovements.map((event) => {
@@ -31,7 +37,7 @@ watchEffect(() => {
 
 const onEventClick = ({ event }) => {
   const found = movements.value.find((e) => e.id === event.id);
-  console.log(found);
+
   selectedEvent.value = found;
   showModal.value = true;
 };
@@ -63,7 +69,7 @@ const closeModal = () => {
           :views="['month']"
           :time="false"
           :today-button="false"
-          :cell-height="150"
+          :cell-height="200"
           :events="movements"
           event-class="class"
           @event-click="onEventClick"
@@ -73,7 +79,7 @@ const closeModal = () => {
         <div class="modal-content">
           <h3>{{ selectedEvent?.title }}</h3>
           <p><strong>Totale quantità:</strong> {{ selectedEvent?.total_quantity }}</p>
-          <table>
+          <table v-if="!isMobile">
             <thead>
               <tr>
                 <th>Ingrediente</th>
@@ -93,6 +99,37 @@ const closeModal = () => {
               </tr>
             </tbody>
           </table>
+          <div class="modal-content-mobile" v-else>
+            <div
+              class="card my-3"
+              v-for="(d, i) in selectedEvent.details"
+              :key="i"
+              :class="d.row_class"
+            >
+              <div class="d-flex flex-column align-items-start p-3">
+                <div class="my-2">
+                  <h3 class="d-inline-block">Ingrediente:</h3>
+                  {{ d.product }}
+                </div>
+                <div class="my-2">
+                  <h3 class="d-inline-block">Quantità:</h3>
+                  {{ d.quantity }}
+                </div>
+                <div class="my-2">
+                  <h3 class="d-inline-block">Prima (g):</h3>
+                  {{ d.before_quantity }}
+                </div>
+                <div class="my-2">
+                  <h3 class="d-inline-block">Dopo (g):</h3>
+                  {{ d.after_quantity }}
+                </div>
+                <div class="my-2">
+                  <h3 class="d-inline-block">Totale:</h3>
+                  {{ d.spent }}€
+                </div>
+              </div>
+            </div>
+          </div>
           <button class="main-button mt-3" @click="closeModal">Chiudi</button>
         </div>
       </div>
@@ -116,7 +153,7 @@ h2 {
 }
 
 .vuecal__month-view .vuecal__cell {
-  min-height: 160px;
+  min-height: 60px !important;
 }
 
 .vuecal__month-view .vuecal__cell-content {
@@ -143,6 +180,12 @@ h2 {
   max-width: 800px;
   width: 90%;
 }
+
+.modal-content-mobile {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
 .modal-content table {
   width: 100%;
   border-collapse: collapse;

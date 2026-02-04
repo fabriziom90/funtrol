@@ -48,9 +48,7 @@ const handleDeleted = (toast) => {
   <Head title="Amministrazione Ricette" />
   <MainLayout>
     <div class="my-3">
-      <div class="d-flex justify-content-between align-items-center">
-        <AdminMenu /> <GoBackButton />
-      </div>
+      <div class="d-flex admin-page-header"><AdminMenu /> <GoBackButton /></div>
       <div class="d-flex justify-content-between align-items-center">
         <h2>Gestione Ricette</h2>
         <Link :href="route('admin.recepies.create')" class="main-button">

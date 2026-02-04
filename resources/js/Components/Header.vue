@@ -1,11 +1,15 @@
-<script setup></script>
-<template lang="">
+<script setup>
+import ApplicationLogo from "./ApplicationLogo.vue";
+</script>
+<template>
   <header>
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <h2>FunTrol</h2>
-          <p>La gestione divertente</p>
+          <div class="d-flex align-items-center">
+            <ApplicationLogo :width="'75px'" />
+            <p><em>La gestione divertente</em></p>
+          </div>
         </div>
       </div>
     </div>

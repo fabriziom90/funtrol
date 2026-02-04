@@ -64,44 +64,56 @@ const closeModal = () => {
       </div>
       <div class="col-12" v-for="product in filterProducts" :key="product.id">
         <div class="card">
-          <div class="d-flex justify-content-between align-items-center p-4">
-            <div class="d-flex align-items-center">
-              <div>
-                <h4 class="d-flex align-items-center">
-                  <span
-                    class="dot"
-                    :class="`dot-${
-                      product.grams_in_warehouse > product.min_stock ? 'green' : 'red'
-                    }`"
-                  ></span>
-                  <span>{{ product.name }}</span>
-                </h4>
-              </div>
-              <div class="mx-4 mt-2">
+          <div class="d-flex justify-content-between p-4">
+            <div class="d-flex mobile-column">
+              <h4 class="d-flex">
+                <span
+                  class="dot"
+                  :class="`dot-${
+                    product.grams_in_warehouse > product.min_stock ? 'green' : 'red'
+                  }`"
+                ></span>
+                <span>{{ product.name }}</span>
+              </h4>
+
+              <div class="mt-2">
                 <strong>Fornitore:</strong>
                 {{ product.supplier.name }}
               </div>
               <div class="mt-2"><strong>Prezzo:</strong> {{ product.price }} €</div>
             </div>
-            <div class="d-flex justify-content-center align-items-center">
+            <div class="d-flex mobile-column mt-2">
               <div class="me-3">
-                <h4>
+                <h4 class="mobile-column">
                   {{ product.grams_in_warehouse }}
                   {{ product.unit }}
                 </h4>
-                <p>
+                <p class="mobile-column">
                   Soglia: {{ product.min_stock }}
                   {{ product.unit }}
                 </p>
               </div>
-              <div class="d-flex flex-column">
-                <button class="btn btn-primary mb-2" @click="openModalOrder(product)">
+              <div class="d-flex row-buttons mt-3">
+                <button
+                  class="btn btn-primary mb-2 me-2"
+                  @click="openModalOrder(product)"
+                >
                   <i class="fa-solid fa-envelope"></i>
-                  Contatta fornitore
+                  <span class="no-mobile">Contatta fornitore</span>
                 </button>
-                <button class="btn btn-warning" @click="openModalUpdate(product)">
+                <a
+                  class="btn btn-success mb-2 me-2"
+                  :href="`tel:${product.supplier.phone}`"
+                >
+                  <i class="fas fa-phone"></i>
+                  <span class="no-mobile">Chiama fornitore</span>
+                </a>
+                <button
+                  class="btn btn-warning mb-2 me-2"
+                  @click="openModalUpdate(product)"
+                >
                   <i class="fa-solid fa-edit"></i>
-                  Aggiorna quantità
+                  <span class="no-mobile">Aggiorna quantità</span>
                 </button>
               </div>
             </div>
@@ -129,6 +141,17 @@ const closeModal = () => {
 
 h2 {
   color: $mainBlue;
+}
+
+.card > div {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.mobile-column {
+  width: 100%;
+  align-items: flex-start;
+  flex-direction: column;
 }
 
 .dot {
@@ -162,5 +185,42 @@ h2 {
 }
 .input-wrapper input {
   padding-left: 50px;
+}
+
+.no-mobile {
+  display: none;
+}
+
+.row-buttons {
+  flex-direction: row;
+}
+
+@media screen and (min-width: 768px) {
+  .no-mobile {
+    display: inline-block;
+    margin-left: 10px;
+  }
+
+  .card > div {
+    flex-direction: row;
+  }
+
+  .mobile-column {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .mobile-column h4,
+  .mobile-column div {
+    margin-right: 10px;
+  }
+
+  .mobile-column:last-child {
+    justify-content: flex-end;
+  }
+
+  .row-buttons {
+    flex-direction: column;
+  }
 }
 </style>

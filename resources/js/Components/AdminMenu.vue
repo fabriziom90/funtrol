@@ -8,35 +8,43 @@ const isRouteActive = (route) => {
 };
 </script>
 <template>
-  <div class="mt-4" id="sections">
-    <Link
-      :href="route('admin.products.index')"
-      :class="isRouteActive('/products') ? 'active' : ''"
-      class="link-section"
-    >
-      Gestione Prodotti
-    </Link>
-    <Link
-      :href="route('admin.recepies.index')"
-      class="link-section"
-      :class="isRouteActive('/recepies') ? 'active' : ''"
-    >
-      Gestione Ricette
-    </Link>
-    <Link
-      :href="route('admin.suppliers.index')"
-      :class="isRouteActive('/suppliers') ? 'active' : ''"
-      class="link-section"
-    >
-      Gestione Fornitori
-    </Link>
-    <Link
-      class="link-section"
-      :href="route('admin.orders.index')"
-      :class="isRouteActive('/orders') ? 'active' : ''"
-      >Storico Ordini</Link
-    >
-  </div>
+  <ul class="mt-4" id="sections">
+    <li>
+      <Link
+        :href="route('admin.products.index')"
+        :class="isRouteActive('/products') ? 'active' : ''"
+        class="link-section"
+      >
+        Gestione Prodotti
+      </Link>
+    </li>
+    <li>
+      <Link
+        :href="route('admin.recepies.index')"
+        class="link-section"
+        :class="isRouteActive('/recepies') ? 'active' : ''"
+      >
+        Gestione Ricette
+      </Link>
+    </li>
+    <li>
+      <Link
+        :href="route('admin.suppliers.index')"
+        :class="isRouteActive('/suppliers') ? 'active' : ''"
+        class="link-section"
+      >
+        Gestione Fornitori
+      </Link>
+    </li>
+    <li>
+      <Link
+        class="link-section"
+        :href="route('admin.orders.index')"
+        :class="isRouteActive('/orders') ? 'active' : ''"
+        >Storico Ordini</Link
+      >
+    </li>
+  </ul>
 </template>
 <style lang="scss" scoped>
 @use "../../scss/app.scss";
@@ -44,6 +52,12 @@ const isRouteActive = (route) => {
 
 #sections {
   margin-bottom: 40px;
+  display: flex;
+  flex-wrap: wrap;
+  li {
+    margin-top: 50px;
+  }
+
   .link-section {
     border: 1px solid #e5e7eb;
     border-radius: 10px;
@@ -52,6 +66,7 @@ const isRouteActive = (route) => {
     padding: 15px 10px;
     cursor: pointer;
     transition: 0.3s;
+    font-size: 15px;
 
     &.active {
       background-color: $mainBlue;

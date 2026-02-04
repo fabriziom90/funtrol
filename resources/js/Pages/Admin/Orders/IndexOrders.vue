@@ -39,9 +39,7 @@ const handleDeleted = (toast) => {
   <Head title="Gestione ordini" />
   <MainLayout>
     <div class="my-3">
-      <div class="d-flex justify-content-between align-items-center">
-        <AdminMenu /><GoBackButton />
-      </div>
+      <div class="d-flex admin-page-header"><AdminMenu /><GoBackButton /></div>
       <div class="d-flex">
         <h2>Gestione Ordini</h2>
       </div>

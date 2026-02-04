@@ -14,27 +14,27 @@ const isRouteActive = (route) => {
         <div class="col-12">
           <ul class="d-flex justify-content-center align-items-center">
             <li :class="isRouteActive('/production') ? 'active' : ''">
-              <Link :href="route('production.index')">
+              <Link :href="route('production.index')" title="Produzione">
                 <i class="fas fa-utensils"></i>
-                <span>Produzione</span>
+                <span class="no-mobile">Produzione</span>
               </Link>
             </li>
             <li :class="isRouteActive('/warehouse') ? 'active' : ''">
-              <Link :href="route('warehouse.index')">
+              <Link :href="route('warehouse.index')" title="Magazzino">
                 <i class="fa-solid fa-warehouse"></i>
-                <span>Magazzino</span>
+                <span class="no-mobile">Magazzino</span>
               </Link>
             </li>
             <li :class="isRouteActive('/calendar') ? 'active' : ''">
-              <Link :href="route('calendar.index')">
+              <Link :href="route('calendar.index')" title="Calendario">
                 <i class="fa-solid fa-calendar-days"></i>
-                <span>Calendario</span>
+                <span class="no-mobile">Calendario</span>
               </Link>
             </li>
             <li :class="isRouteActive('/admin') ? 'active' : ''">
-              <Link :href="route('admin.administration.index')">
+              <Link :href="route('admin.administration.index')" title="Amministrazione">
                 <i class="fas fa-gear"></i>
-                <span>Amministrazione</span>
+                <span class="no-mobile">Amministrazione</span>
               </Link>
             </li>
           </ul>
@@ -59,7 +59,7 @@ footer {
     max-width: 100%;
   }
   li {
-    padding: 20px;
+    padding: 20px 8px;
     min-width: 60px;
     text-align: center;
 
@@ -78,22 +78,23 @@ footer {
       }
     }
     span {
-      display: block;
+      display: none;
       padding-top: 10px;
     }
   }
 }
 
-// media query per schermi molto piccoli
-@media (max-width: 768px) {
+@media screen and (min-width: 768px) {
   footer {
     li {
-      padding: 8px;
+      padding: 20px;
+      span {
+        display: block;
+      }
 
       a {
-        font-size: 10px;
         i {
-          font-size: 1.2rem; // icone più piccole su schermi stretti
+          font-size: 2.5rem;
         }
       }
     }

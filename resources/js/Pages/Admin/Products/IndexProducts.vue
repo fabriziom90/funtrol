@@ -44,9 +44,7 @@ const handleDeleted = (toast) => {
   <Head title="Amministrazione Prodotti" />
   <MainLayout>
     <div class="my-3">
-      <div class="d-flex justify-content-between align-items-center">
-        <AdminMenu /> <GoBackButton />
-      </div>
+      <div class="d-flex admin-page-header"><AdminMenu /> <GoBackButton /></div>
       <div class="d-flex justify-content-between align-items-center">
         <h2>Gestione Prodotti</h2>
         <Link :href="route('admin.products.create')" class="main-button">
