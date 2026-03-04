@@ -20,7 +20,6 @@ class ProductController extends Controller
     {
         $query = Product::with(['supplier', 'store']);
 
-        // 🔎 Filtro per negozio (solo se passato)
         if ($request->filled('store')) {
             $query->where('store_id', $request->store);
         }

@@ -19,4 +19,8 @@ class Recepy extends Model
     public function warehouseMovements(){
         return $this->hasMany(warehouseMovement::class);
     }
+
+    public function store(){
+        return $this->belongsTo(Store::class);
+    }
 }

@@ -2,27 +2,45 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Recepy;
-use App\Models\Product;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRecepyRequest;
 use App\Http\Requests\UpdateRecepyRequest;
-use App\Http\Controllers\Controller;
+use App\Models\Product;
+use App\Models\Recepy;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Store;
 
 class RecepyController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $recepies = Recepy::all();
-        return Inertia::render('Admin/Recepies/IndexRecepies', ['recepies' => $recepies, 'columns' => [
-            ['text' => 'ID', 'value' => 'id'],
-            ['text' => 'Nome', 'value' => 'name'],
-            ['text' => 'Descrizione', 'value' => 'description'],
-        ],
-        'toast' => session('toast')]);
+        $query = Recepy::with(['store']);
+
+        if ($request->filled('store')) {
+            $query->where('store_id', $request->store);
+        }
+
+        $recepies = $query
+            ->orderBy('id', 'desc')
+            ->paginate(10)
+            ->withQueryString(); // mantiene i filtri nella paginazione
+
+        return Inertia::render('Admin/Recepies/IndexRecepies', [
+            'recepies' => $recepies, 
+            'columns' => [
+                ['text' => 'ID', 'value' => 'id'],
+                ['text' => 'Nome', 'value' => 'name'],
+                ['text' => 'Descrizione', 'value' => 'description'],
+                ['text' => 'Negozio', 'value' => 'store.name']
+            ],
+            'stores' => Store::select('id','name')->get(), // per select filtro
+            'filters' => $request->only(['store']),
+            'toast' => session('toast')
+        ]);
     }
 
     /**
