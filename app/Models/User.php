@@ -44,4 +44,14 @@ class User extends Authenticatable
         'role' => UserRole::class,
     ];
 
+    public function store()
+    {
+        return $this->belongsTo(Store::class);
+    }
+
+    public function isSuperAdmin()
+    {
+        return $this->role === 'superadmin';
+    }
+
 }

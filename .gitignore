@@ -4,7 +4,13 @@
 /public/hot
 /public/storage
 /storage/*.key
-/vendor
+vendor
+_vendor
+__vendor
+vendor.zip
+.DS_store
+_composer.lock
+__composer.lock
 .env
 .env.backup
 .env.production

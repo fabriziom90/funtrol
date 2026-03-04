@@ -2,32 +2,48 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Product;
-use App\Models\Supplier;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-use App\Http\Controllers\Controller;
+use App\Models\Product;
+use App\Models\Supplier;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Store;
 
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {   
-        $products = Product::with(['supplier'])->get();
+    public function index(Request $request)
+    {
+        $query = Product::with(['supplier', 'store']);
+
+        // 🔎 Filtro per negozio (solo se passato)
+        if ($request->filled('store')) {
+            $query->where('store_id', $request->store);
+        }
+
+        $products = $query
+            ->orderBy('id', 'desc')
+            ->paginate(10)
+            ->withQueryString(); // mantiene i filtri nella paginazione
+
         return Inertia::render('Admin/Products/IndexProducts', [
-            'products' => $products, 
+            'products' => $products,
+            'stores' => Store::select('id','name')->get(), // per select filtro
+            'filters' => $request->only(['store']),
             'columns' => [
                 ['text' => 'ID', 'value' => 'id'],
                 ['text' => 'Nome', 'value' => 'name'],
+                ['text' => 'Negozio', 'value' => 'store.name'],
                 ['text' => 'Prezzo', 'value' => 'price'],
                 ['text' => 'Fornitore', 'value' => 'supplier'],
                 ['text' => 'Quantità in magazzino', 'value' => 'grams_in_warehouse'],
             ],
-            'toast' => session('toast')]
-        );
+            'toast' => session('toast')
+        ]);
     }
 
     /**

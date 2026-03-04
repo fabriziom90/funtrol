@@ -6,6 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Product;
 use App\Models\Recepy;
+use App\Models\Store;
 
 class RecepySeeder extends Seeder
 {
@@ -14,32 +15,36 @@ class RecepySeeder extends Seeder
      */
     public function run(): void
     {
-        $products = Product::all();
+        $stores = Store::all();
 
-        if ($products->isEmpty()) {
-            $this->command->info('Non ci sono prodotti! Popola prima i prodotti.');
-            return;
-        }
+        $units = ['pz', 'kg'];
 
-        // Creiamo 10 ricette di esempio
-        for ($i = 1; $i <= 10; $i++) {
-            $recepy = Recepy::create([
-                'name' => "Ricetta $i",
-                'description' => "Descrizione della ricetta $i",
-                'price' => rand(5, 50), // prezzo casuale
-            ]);
+        foreach ($stores as $store) {
+            for ($i = 1; $i <= 20; $i++) {
 
-            // Associa ingredienti casuali (3-5 prodotti per ricetta)
-            $ingredientProducts = $products->random(rand(3, 5));
+                $recipe = Recepy::create([
+                    'name' => "Ricetta $i - Store {$store->id}",
+                    'unit' => $units[array_rand($units)],
+                    'description' => "Descrizione della ricetta $i per lo store {$store->id}",
+                    'store_id' => $store->id,
+                ]);
 
-            $pivotData = [];
-            foreach ($ingredientProducts as $product) {
-                $pivotData[$product->id] = [
-                    'grams_used' => rand(50, 500), // quantità casuale
-                ];
+                // Associa ingredienti
+                $products = Product::where('store_id', $store->id)
+                    ->inRandomOrder()
+                    ->take(rand(3, 5))
+                    ->get();
+
+                $pivotData = [];
+
+                foreach ($products as $product) {
+                    $pivotData[$product->id] = [
+                        'grams_used' => rand(50, 500),
+                    ];
+                }
+
+                $recipe->products()->sync($pivotData);
             }
-
-            $recepy->products()->sync($pivotData);
         }
     }
 }

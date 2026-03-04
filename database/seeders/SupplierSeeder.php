@@ -4,20 +4,23 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Supplier;
+use App\Models\Store;
 
 class SupplierSeeder extends Seeder
 {
     public function run(): void
     {
-        $suppliers = [
-            ['name' => 'Fornitore Mario', 'email' => 'mario@example.com', 'phone' => '3331112222'],
-            ['name' => 'Fresh Foods Srl', 'email' => 'info@freshfoods.com', 'phone' => '3332223333'],
-            ['name' => 'Quality Ingredients Spa', 'email' => 'contatti@qi.com', 'phone' => '3334445555'],
-            ['name' => 'Bio Prime', 'email' => 'bio.prime@example.com', 'phone' => '3201234567'],
-        ];
+        $stores = Store::all();
 
-        foreach ($suppliers as $supplier) {
-            Supplier::create($supplier);
+        foreach ($stores as $store) {
+            for ($i = 1; $i <= 5; $i++) {
+                Supplier::create([
+                    'name' => "Fornitore $i - Store {$store->id}",
+                    'email' => "fornitore$i-store{$store->id}@example.com",
+                    'phone' => '33300000' . $i,
+                    'store_id' => $store->id,
+                ]);
+            }
         }
     }
 }

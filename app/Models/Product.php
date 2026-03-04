@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\BelongsToStore;
 
 class Product extends Model
 {
     use HasFactory;
+    use BelongsToStore;
 
     public function supplier()
     {
@@ -22,7 +24,7 @@ class Product extends Model
     }
 
     public function warehouseMovements(){
-        return $this->hasMany(warehouseMovements::class);
+        return $this->hasMany(WarehouseMovement::class);
     }
 
     public function productOrdereds()
@@ -35,6 +37,11 @@ class Product extends Model
         return $this->belongsToMany(Order::class, 'product_ordereds')
             ->withPivot(['quantity', 'unit_price'])
             ->withTimestamps();
+    }
+
+    public function store()
+    {
+        return $this->belongsTo(Store::class);
     }
 
 }

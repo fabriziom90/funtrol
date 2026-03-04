@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\BelongsToStore;
 
 class Recepy extends Model
 {
     use HasFactory;
+    use BelongsToStore;
 
     public function products()
     {
@@ -15,6 +17,6 @@ class Recepy extends Model
     }
 
     public function warehouseMovements(){
-        return $this->hasMany(warehouseMovements::class);
+        return $this->hasMany(warehouseMovement::class);
     }
 }

@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\BelongsToStore;
 
 class Order extends Model
 {
     use HasFactory;
+    use BelongsToStore;
 
     protected $fillable = [
         'supplier_id',

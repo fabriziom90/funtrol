@@ -65,12 +65,8 @@ const submit = () => {
               </div>
 
               <div class="form-group mt-3">
-                <button class="main-button" :disabled="loading">
-                  {{ loading ? "Accesso..." : "Accedi" }}
-                </button>
+                <button class="main-button">Accedi</button>
               </div>
-
-              <p v-if="error" class="error">{{ error }}</p>
             </form>
           </div>
         </div>
@@ -81,6 +77,7 @@ const submit = () => {
 
 <style lang="scss" scoped>
 @use "../../../scss/_partials/variables" as *;
+
 .form-login {
   max-width: 450px;
   border: 1px solid $mainGrey;

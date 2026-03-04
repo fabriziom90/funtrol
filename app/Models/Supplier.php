@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\BelongsToStore;
 
 class Supplier extends Model
 {
     use HasFactory;
+    use BelongsToStore;
 
     public function products()
     {

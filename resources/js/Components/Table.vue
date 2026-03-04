@@ -80,13 +80,16 @@ const filteredItems = computed(() => {
         <!-- default -->
         <span v-else>
           {{ item[header.value] }}
-          {{
-            header.value === "price" || header.value === "total"
-              ? "€"
-              : item.unit
-              ? item.unit
-              : ""
-          }}
+
+          <span v-if="header.value === 'store.name' && item.store">
+            {{ item.store.name }}
+          </span>
+
+          <span v-if="header.value === 'price' || header.value === 'total'"> € </span>
+
+          <span v-if="header.value === 'quantity' || header.grams_in_warehouse">
+            {{ item.unit }}
+          </span>
         </span>
       </div>
 
@@ -229,12 +232,15 @@ const filteredItems = computed(() => {
 #order-products-table td:nth-child(1)::before {
   content: "Prodotto";
 }
+
 #order-products-table td:nth-child(2)::before {
   content: "Prezzo";
 }
+
 #order-products-table td:nth-child(3)::before {
   content: "Quantità";
 }
+
 #order-products-table td:nth-child(4)::before {
   content: "Totale";
 }
@@ -255,117 +261,68 @@ const filteredItems = computed(() => {
 
 @media (min-width: 768px) {
   .data-grid {
-    display: block;
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
   }
 
   /* HEADER */
   .data-header {
-    display: grid;
-    grid-template-columns:
-      80px /* ID */
-      minmax(180px, 2fr) /* Nome */
-      minmax(200px, 2fr) /* Fornitore */
-      minmax(120px, 1fr) /* Prezzo */
-      minmax(300px, 3fr) /* Prodotti */
-      auto; /* Azioni */
+    display: table-header-group;
     background: #f3f3f3;
-    border: 1px solid #ddd;
-    border-radius: 6px 6px 0 0;
+    font-weight: 600;
   }
 
   .header-cell {
-    padding: 10px;
-    font-weight: 600;
-    border-right: 1px solid #ddd;
-  }
-
-  .header-cell:last-child {
-    border-right: none;
+    display: table-cell;
+    padding: 12px 10px;
+    border-bottom: 2px solid #ddd;
+    white-space: nowrap;
   }
 
   /* ROW */
   .data-row {
-    display: grid;
-    grid-template-columns:
-      80px
-      minmax(180px, 2fr)
-      minmax(200px, 2fr)
-      minmax(120px, 1fr)
-      minmax(300px, 3fr)
-      auto;
-    align-items: start;
-    border-top: none;
-    border-radius: 0 0 6px 6px;
-    padding: 0;
+    display: table-row;
+    background: white;
   }
 
-  .data-row:not(:last-child) {
-    border-bottom: 1px solid #ddd;
+  .data-row:nth-child(even) {
+    background: #fafafa;
   }
 
   /* CELLE */
   .data-cell {
-    display: block;
+    display: table-cell;
     padding: 10px;
-    border-bottom: none;
-    border-right: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
   }
 
   .data-cell::before {
     display: none;
   }
 
-  .data-cell > span,
-  .data-cell > div {
-    text-align: left;
-  }
-
+  /* AZIONI */
   .actions-cell {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    border-right: none;
+    white-space: nowrap;
   }
 
-  /* =========================
-     PRODUCTS SUBTABLE DESKTOP
-     ========================= */
-
+  /* PRODUCTS SUBTABLE */
   #order-products-table {
+    width: 100%;
     font-size: 13px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    overflow: hidden;
-  }
-
-  #order-products-table thead {
-    display: table-header-group;
-    background: #f7f7f7;
+    border-collapse: collapse;
   }
 
   #order-products-table th,
   #order-products-table td {
     padding: 6px 8px;
     border-bottom: 1px solid #eee;
-    text-align: left;
   }
 
-  #order-products-table tr {
-    display: table-row;
-    background: white;
-    border: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  #order-products-table td::before {
-    display: none;
-  }
-
-  #order-products-table td {
-    display: table-cell;
-
-    padding: 4px 5px;
+  #order-products-table thead {
+    display: table-header-group;
+    background: #f7f7f7;
   }
 }
 </style>
