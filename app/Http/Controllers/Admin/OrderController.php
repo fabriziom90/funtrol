@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Order;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
-use App\Http\Controllers\Controller;
+use App\Models\Order;
+use App\Models\Store;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class OrderController extends Controller
@@ -13,14 +15,27 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $orders = Order::with(['products', 'supplier'])->orderBy('date_order')->get();
+    public function index(Request $request)
+    {   
+
+        $query = Order::with(['store_id']);
+
+        if ($request->filled('store')) {
+            $query->where('store_id', $request->store);
+        }
+
+        $orders = $query
+            ->orderBy('id', 'desc')
+            ->paginate(10)
+            ->withQueryString(); // mantiene i filtri nella paginazione
 
         return Inertia::render('Admin/Orders/IndexOrders', [
             'orders' => $orders, 
+            'stores'    => Store::select('id', 'name')->get(),
+            'filters'   => $request->only(['store']),
             'columns' => [
                 ['text' => 'ID', 'value' => 'id'],
+                ['text' => 'Negozio', 'value' => 'store.name'],
                 ['text' => 'Fornitore', 'value' => 'supplier'],
                 ['text' => 'Prodotti', 'value' => 'products'],
                 ['text' => 'Totale', 'value' => 'total'],

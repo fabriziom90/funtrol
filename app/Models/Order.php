@@ -36,4 +36,8 @@ class Order extends Model
             ->withPivot(['quantity', 'unit_price'])
             ->withTimestamps();
     }
+
+    public function store(){
+        return $this->belongsTo(Store::class);
+    }
 }

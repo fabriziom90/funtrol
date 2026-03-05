@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Supplier;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSupplierRequest;
 use App\Http\Requests\UpdateSupplierRequest;
-use App\Http\Controllers\Controller;
+use App\Models\Supplier;
+use App\Models\Store;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class SupplierController extends Controller
@@ -13,15 +15,28 @@ class SupplierController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $suppliers = Supplier::all();
+        $query = Supplier::with(['store']);
+
+        if ($request->filled('store')) {
+            $query->where('store_id', $request->store);
+        }
+
+        $suppliers = $query
+            ->orderBy('id', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
         return Inertia::render('Admin/Supplier/IndexSupplier', ['suppliers' => $suppliers, 'columns' => [
             ['text' => 'ID', 'value' => 'id'],
+            ['text' => 'Negozio', 'value' => 'store.name'],
             ['text' => 'Nome', 'value' => 'name'],
             ['text' => 'Email', 'value' => 'email'],
             ['text' => 'Telefono', 'value' => 'phone'],
         ],
+        'stores' => Store::select('id','name')->get(), // per select filtro
+        'filters' => $request->only(['store']),
         'toast' => session('toast')]);
     }
 

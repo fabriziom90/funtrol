@@ -10,7 +10,9 @@ import { router } from "@inertiajs/vue3";
 import { useToast } from "vue-toast-notification";
 
 const props = defineProps({
-  suppliers: Array,
+  suppliers: Object,
+  filters: Object,
+  stores: Array,
   columns: Array,
 });
 
@@ -18,6 +20,7 @@ const $toast = useToast();
 
 const showModal = ref(false);
 const supplierToDelete = ref(null);
+const storeFilter = ref(props.filters.store || "");
 
 const editSupplier = (supplierId) => {
   router.visit(route("admin.suppliers.edit", supplierId));
@@ -40,12 +43,28 @@ const handleDeleted = (toast) => {
     duration: 3000,
   });
 };
+
+const applyFilter = () => {
+  router.get(
+    route("admin.suppliers.index"),
+    {
+      store: storeFilter.value,
+    },
+    {
+      preserveState: true,
+      replace: true,
+    }
+  );
+};
 </script>
 <template>
   <Head title="Amministrazione Fornitori" />
   <MainLayout>
     <div class="my-3">
-      <div class="d-flex admin-page-header"><AdminMenu /> <GoBackButton /></div>
+      <div class="d-flex admin-page-header">
+        <AdminMenu />
+        <GoBackButton />
+      </div>
       <div class="d-flex justify-content-between align-items-center">
         <h2>Gestione Fornitori</h2>
         <Link :href="route('admin.suppliers.create')" class="main-button">
@@ -54,9 +73,17 @@ const handleDeleted = (toast) => {
       </div>
     </div>
     <div>
+      <div class="mb-3">
+        <select v-model="storeFilter" @change="applyFilter" class="form-select w-auto">
+          <option value="">Tutti i negozi</option>
+          <option v-for="store in stores" :key="store.id" :value="store.id">
+            {{ store.name }}
+          </option>
+        </select>
+      </div>
       <Table
         :headers="columns"
-        :items="suppliers"
+        :items="suppliers.data"
         :show-view="false"
         :show-edit="true"
         :show-delete="true"
@@ -66,6 +93,20 @@ const handleDeleted = (toast) => {
         @delete="deleteSupplier"
       >
       </Table>
+    </div>
+    <div class="mt-4 d-flex justify-content-center">
+      <button
+        v-for="link in suppliers.links"
+        :key="link.label"
+        v-html="link.label"
+        :disabled="!link.url"
+        @click="link.url && router.visit(link.url)"
+        class="btn btn-sm mx-1"
+        :class="{
+          'btn-primary': link.active,
+          'btn-outline-primary': !link.active,
+        }"
+      />
     </div>
     <ModalDelete
       :show="showModal"
