@@ -44,8 +44,9 @@ class SupplierController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-    {
-        return Inertia::render('Admin/Supplier/CreateSupplier');
+    {   
+        $stores = Store::all();
+        return Inertia::render('Admin/Supplier/CreateSupplier', ['stores' => $stores]);
     }
 
     /**
@@ -56,6 +57,7 @@ class SupplierController extends Controller
         $form_data = $request->validated();
 
         $newSupplier = new Supplier();
+        $newSupplier->store_id = $form_data['store_id'];
         $newSupplier->name = $form_data['name'];
         $newSupplier->email = $form_data['email'];
         $newSupplier->phone = $form_data['phone'];
@@ -82,8 +84,9 @@ class SupplierController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(Supplier $supplier)
-    {
-        return Inertia::render('Admin/Supplier/EditSupplier', ['supplier' => $supplier]);
+    {   
+        $stores = Store::all();
+        return Inertia::render('Admin/Supplier/EditSupplier', ['supplier' => $supplier, 'stores' => $stores]);
     }
 
     /**
@@ -93,6 +96,7 @@ class SupplierController extends Controller
     {
         $form_data = $request->validated();
 
+        $supplier->store_id = $form_data['store_id'];
         $supplier->name = $form_data['name'];
         $supplier->email = $form_data['email'];
         $supplier->phone = $form_data['phone'];

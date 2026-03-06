@@ -31,6 +31,7 @@ class UpdateSupplierRequest extends FormRequest
                 Rule::unique('suppliers', 'email')->ignore($this->supplier),
             ],
             'phone' => ['nullable', 'string', 'max:20'],
+            'store_id' => ['required', 'exists:stores,id']
         ];
     }
 
@@ -47,6 +48,9 @@ class UpdateSupplierRequest extends FormRequest
 
             'phone.string'  => 'Il numero di telefono deve essere una stringa.',
             'phone.max'     => 'Il numero di telefono non può superare i 20 caratteri.',
+
+            'store_id.required' => 'Il negozio è obbligatorio.',
+            'store_id.exists' => 'Il negozio selezionato non esiste.',
         ];
     }
 }

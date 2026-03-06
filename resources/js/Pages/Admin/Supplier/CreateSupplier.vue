@@ -7,10 +7,15 @@ import { useToast } from "vue-toast-notification";
 
 const $toast = useToast();
 
+const props = defineProps({
+  stores: Array,
+});
+
 const form = useForm({
   name: "",
   email: "",
   phone: "",
+  store_id: "",
 });
 
 const handleSubmitForm = () => {
@@ -39,6 +44,22 @@ const handleSubmitForm = () => {
     </div>
     <form @submit.prevent="handleSubmitForm">
       <div class="row gy-4 mt-1">
+        <div class="col-12 col-md-4">
+          <label for="" class="form-label">Negozio</label>
+          <select
+            v-model="form.store_id"
+            class="form-select"
+            :class="form.errors.store_id ? 'is-invalid' : ''"
+          >
+            <option value="">Seleziona Negozio</option>
+            <option :value="store.id" v-for="store in props.stores">
+              {{ store.name }}
+            </option>
+          </select>
+          <div v-if="form.errors.store_id" class="text-danger">
+            {{ form.errors.store_id }}
+          </div>
+        </div>
         <div class="col-12 col-md-4">
           <label for="" class="form-label">Nome</label>
           <input
