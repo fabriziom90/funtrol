@@ -26,7 +26,7 @@ class UpdateRecepyRequest extends FormRequest
             'name' => ['required', 'string', 'max:255', Rule::unique('recepies', 'name')->ignore($this->recepy)],
             'description' => ['nullable', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
-
+            'store_id' => ['required', 'exists:stores,id'],
             'ingredients' => ['required', 'array', 'min:1'],
             'ingredients.*.product_id' => ['required', 'exists:products,id'],
             'ingredients.*.grams_used' => ['required', 'integer', 'min:1'],
@@ -46,6 +46,9 @@ class UpdateRecepyRequest extends FormRequest
             'price.required' => 'Il prezzo è obbligatorio.',
             'price.numeric' => 'Il prezzo deve essere numerico.',
             'price.min' => 'Il prezzo non può essere negativo.',
+
+            'store_id.required' => 'Il negozio è obbligatorio.',
+            'store_id.exists' => 'Il negozio selezionato non esiste.',
 
             'ingredients.required' => 'Devi inserire almeno un ingrediente.',
             'ingredients.array' => 'Gli ingredienti devono essere un array.',

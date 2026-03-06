@@ -49,7 +49,8 @@ class RecepyController extends Controller
     public function create()
     {
         $products = Product::all();
-        return Inertia::render('Admin/Recepies/CreateRecepy', ['products' => $products]);
+        $stores = Store::all();
+        return Inertia::render('Admin/Recepies/CreateRecepy', ['products' => $products, 'stores' => $stores]);
     }
 
     /**
@@ -61,9 +62,10 @@ class RecepyController extends Controller
         
         $newRecepy = new Recepy();
         $newRecepy->name = $form_data['name'];
-        $newRecepy->unit = $form_data['unit'];
+        $newRecepy->unit = $request->get('unit');
         $newRecepy->description = $form_data['description'];
         $newRecepy->price = $form_data['price'];
+        $newRecepy->store_id = $form_data['store_id'];
 
         $newRecepy->save();
 
@@ -95,7 +97,8 @@ class RecepyController extends Controller
     public function edit(Recepy $recepy)
     {
         $products = Product::all();
-        return Inertia::render('Admin/Recepies/EditRecepy', ['recepy' => $recepy->load('products'), 'products' => $products]);
+        $stores = Store::all();
+        return Inertia::render('Admin/Recepies/EditRecepy', ['recepy' => $recepy->load('products'), 'products' => $products, 'stores' => $stores]);
     }
 
     /**
@@ -106,9 +109,10 @@ class RecepyController extends Controller
         $form_data = $request->validated();
 
         $recepy->name = $form_data['name'];
-        $recepy->name = $form_data['unit'];
+        $recepy->unit = $request->get('unit');
         $recepy->description = $form_data['description'];
         $recepy->price = $form_data['price'];
+        $recepy->store_id = $form_data['store_id'];
         // dd($form_data);
         $recepy->save();
 
