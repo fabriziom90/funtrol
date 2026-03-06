@@ -51,7 +51,8 @@ class ProductController extends Controller
     public function create()
     {
         $suppliers = Supplier::all();
-        return Inertia::render('Admin/Products/CreateProduct', ['suppliers' => $suppliers]);
+        $stores = Store::all();
+        return Inertia::render('Admin/Products/CreateProduct', ['suppliers' => $suppliers, 'stores' => $stores]);
     }
 
     /**
@@ -66,8 +67,9 @@ class ProductController extends Controller
         $newProduct->price = $form_data['price'];
         $newProduct->supplier_id = $form_data['supplier_id'];
         $newProduct->grams_in_warehouse = $form_data['grams_in_warehouse'];
-        $newProduct->unit = $form_data['unit'];
-
+        $newProduct->unit = $request->get('unit');
+        $newProduct->store_id = $form_data['store_id'];
+       
         $newProduct->save();
 
         return redirect()->route('admin.products.index')->with([
@@ -92,7 +94,9 @@ class ProductController extends Controller
     public function edit(Product $product)
     {   
         $suppliers = Supplier::all();
-        return Inertia::render('Admin/Products/EditProduct', ['suppliers' => $suppliers, 'product' => $product]);
+        $stores = Store::all();
+        
+        return Inertia::render('Admin/Products/EditProduct', ['suppliers' => $suppliers, 'product' => $product, 'stores' => $stores]);
     }
 
     /**
@@ -106,7 +110,8 @@ class ProductController extends Controller
         $product->price = $form_data['price'];
         $product->supplier_id = $form_data['supplier_id'];
         $product->grams_in_warehouse = $form_data['grams_in_warehouse'];
-        $product->unit = $form_data['unit'];
+        $product->unit = $request->get('unit');
+        $product->store_id = $form_data['store_id'];
 
         $product->save();
 

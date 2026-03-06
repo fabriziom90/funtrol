@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { Head, useForm, usePage } from "@inertiajs/vue3";
 import MainLayout from "@/Layouts/MainLayout.vue";
 import GoBackButton from "@/Components/GoBackButton.vue";
@@ -8,6 +8,7 @@ import { useToast } from "vue-toast-notification";
 const props = defineProps({
   product: Object,
   suppliers: Array,
+  stores: Array,
 });
 
 const $toast = useToast();
@@ -18,6 +19,7 @@ const form = useForm({
   supplier_id: props.product.supplier_id,
   grams_in_warehouse: props.product.grams_in_warehouse,
   unit: props.product.unit,
+  store_id: props.product.store_id,
 });
 
 const handleSubmitForm = () => {
@@ -36,6 +38,14 @@ const handleSubmitForm = () => {
     },
   });
 };
+
+const filteredSuppliers = computed(() => {
+  if (!form.store_id) {
+    return [];
+  }
+
+  return props.suppliers.filter((supplier) => supplier.store_id === form.store_id);
+});
 </script>
 <template>
   <Head title="Crea prodotto" />
@@ -46,6 +56,22 @@ const handleSubmitForm = () => {
     </div>
     <form @submit.prevent="handleSubmitForm">
       <div class="row gy-4 mt-1">
+        <div class="col-12 col-md-4">
+          <label for="" class="form-label">Negozio</label>
+          <select
+            v-model="form.store_id"
+            class="form-select"
+            :class="form.errors.store_id ? 'is-invalid' : ''"
+          >
+            <option value="">Seleziona Negozio</option>
+            <option :value="store.id" v-for="store in props.stores">
+              {{ store.name }}
+            </option>
+          </select>
+          <div v-if="form.errors.store_id" class="text-danger">
+            {{ form.errors.store_id }}
+          </div>
+        </div>
         <div class="col-12 col-md-4">
           <label for="" class="form-label">Nome</label>
           <input
@@ -82,7 +108,7 @@ const handleSubmitForm = () => {
             :class="form.errors.supplier_id ? 'is-invalid' : ''"
           >
             <option value="">Seleziona fornitore</option>
-            <option :value="supplier.id" v-for="supplier in props.suppliers">
+            <option :value="supplier.id" v-for="supplier in filteredSuppliers">
               {{ supplier.name }}
             </option>
           </select>

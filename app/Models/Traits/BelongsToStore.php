@@ -35,6 +35,10 @@ trait BelongsToStore
 
             $user = auth()->user();
 
+            if ($user->store_id === null) {
+                return;
+            }
+
             if ($user->role !== 'superadmin') {
                 $model->store_id = $user->store_id;
             }

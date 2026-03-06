@@ -26,6 +26,7 @@ class StoreProductRequest extends FormRequest
             'price' => ['required', 'numeric', 'min:0'],
             'grams_in_warehouse' => ['required', 'integer', 'min:0'],
             'supplier_id' => ['required', 'exists:suppliers,id'],
+            'store_id' => ['required', 'exists:stores,id']
         ];
     }
 
@@ -46,6 +47,9 @@ class StoreProductRequest extends FormRequest
 
             'supplier_id.required' => 'Il fornitore è obbligatorio.',
             'supplier_id.exists' => 'Il fornitore selezionato non esiste.',
+
+            'store_id.required' => 'Il negozio è obbligatorio.',
+            'store_id.exists' => 'Il negozio selezionato non esiste.',
         ];
     }
 }
