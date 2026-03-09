@@ -40,7 +40,7 @@ const hasIngredientError = (index, field) => {
 };
 
 const handleSubmitForm = () => {
-  form.put(route("admin.recepies.update", { recepy: props.recepy.id }), {
+  form.put(route("recepies.update", { recepy: props.recepy.id }), {
     onSuccess: (page) => {
       const toast = page.props.toast;
       if (toast) {

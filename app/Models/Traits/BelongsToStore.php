@@ -18,12 +18,17 @@ trait BelongsToStore
             $user = auth()->user();
 
             // Se superadmin → nessun filtro
-            if ($user->store_id === null) {
+            if ($user->role === 'superadmin') {
                 return;
             }
 
-            // Owner → filtra per store
-            $builder->where('store_id', $user->store_id);
+            $storeId = optional($user->store)->id;
+
+            if (!$storeId) {
+                return;
+            }
+
+            $builder->where('store_id', $storeId);
         });
 
         // Imposta automaticamente store_id in fase di creazione
@@ -35,12 +40,14 @@ trait BelongsToStore
 
             $user = auth()->user();
 
-            if ($user->store_id === null) {
+            if ($user->role === 'superadmin') {
                 return;
             }
 
-            if ($user->role !== 'superadmin') {
-                $model->store_id = $user->store_id;
+            $storeId = optional($user->store)->id;
+
+            if ($storeId) {
+                $model->store_id = $storeId;
             }
         });
     }

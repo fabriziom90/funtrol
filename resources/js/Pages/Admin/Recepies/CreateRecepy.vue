@@ -33,7 +33,7 @@ const hasIngredientError = (index, field) => {
 };
 
 const handleSubmitForm = () => {
-  form.post(route("admin.recepies.store"), {
+  form.post(route("recepies.store"), {
     onSuccess: (page) => {
       const toast = page.props.toast;
       if (toast) {

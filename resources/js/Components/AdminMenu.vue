@@ -3,7 +3,6 @@ import { Link, usePage } from "@inertiajs/vue3";
 const page = usePage();
 
 const isRouteActive = (route) => {
-  console.log(page.url, route);
   return page.url.includes(route);
 };
 </script>
@@ -11,7 +10,17 @@ const isRouteActive = (route) => {
   <ul class="mt-4" id="sections">
     <li>
       <Link
-        :href="route('admin.products.index')"
+        v-if="page.props.auth.user.role === 'superadmin'"
+        :href="route('admin.stores.index')"
+        :class="isRouteActive('/stores') ? 'active' : ''"
+        class="link-section"
+      >
+        Gestione Negozi
+      </Link>
+    </li>
+    <li>
+      <Link
+        :href="route('products.index')"
         :class="isRouteActive('/products') ? 'active' : ''"
         class="link-section"
       >
@@ -20,7 +29,7 @@ const isRouteActive = (route) => {
     </li>
     <li>
       <Link
-        :href="route('admin.recepies.index')"
+        :href="route('recepies.index')"
         class="link-section"
         :class="isRouteActive('/recepies') ? 'active' : ''"
       >
@@ -29,7 +38,7 @@ const isRouteActive = (route) => {
     </li>
     <li>
       <Link
-        :href="route('admin.suppliers.index')"
+        :href="route('suppliers.index')"
         :class="isRouteActive('/suppliers') ? 'active' : ''"
         class="link-section"
       >
@@ -39,9 +48,10 @@ const isRouteActive = (route) => {
     <li>
       <Link
         class="link-section"
-        :href="route('admin.orders.index')"
+        :href="route('orders.index')"
         :class="isRouteActive('/orders') ? 'active' : ''"
-        >Storico Ordini</Link
+      >
+        Storico Ordini</Link
       >
     </li>
   </ul>
@@ -54,6 +64,7 @@ const isRouteActive = (route) => {
   margin-bottom: 40px;
   display: flex;
   flex-wrap: wrap;
+
   li {
     margin-top: 50px;
   }

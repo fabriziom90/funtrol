@@ -23,7 +23,7 @@ const productToDelete = ref(null);
 const storeFilter = ref(props.filters.store || "");
 
 const editProduct = (productId) => {
-  router.visit(route("admin.products.edit", productId));
+  router.visit(route("products.edit", productId));
 };
 
 const deleteProduct = (product) => {
@@ -45,7 +45,7 @@ const handleDeleted = (toast) => {
 
 const applyFilter = () => {
   router.get(
-    route("admin.products.index"),
+    route("products.index"),
     {
       store: storeFilter.value,
     },
@@ -66,9 +66,7 @@ const applyFilter = () => {
       </div>
       <div class="d-flex justify-content-between align-items-center">
         <h2>Gestione Prodotti</h2>
-        <Link :href="route('admin.products.create')" class="main-button">
-          Crea prodotto
-        </Link>
+        <Link :href="route('products.create')" class="main-button"> Crea prodotto </Link>
       </div>
     </div>
     <div>
@@ -86,7 +84,7 @@ const applyFilter = () => {
         :show-view="false"
         :show-edit="true"
         :show-delete="true"
-        baseRoute="admin.products"
+        baseRoute="products"
         @edit="editProduct"
         @delete="deleteProduct"
       >
@@ -109,7 +107,7 @@ const applyFilter = () => {
     <ModalDelete
       :show="showModal"
       :item="productToDelete"
-      baseRoute="admin.products"
+      baseRoute="products"
       @close="closeDeleteModal"
       @deleted="handleDeleted"
     />

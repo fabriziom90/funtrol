@@ -32,7 +32,7 @@ const isRouteActive = (route) => {
               </Link>
             </li>
             <li :class="isRouteActive('/admin') ? 'active' : ''">
-              <Link :href="route('admin.administration.index')" title="Amministrazione">
+              <Link :href="route('administration.index')" title="Amministrazione">
                 <i class="fas fa-gear"></i>
                 <span class="no-mobile">Amministrazione</span>
               </Link>
@@ -55,9 +55,11 @@ footer {
   border-top: 1px solid #c7c7c7;
   background-color: #fff;
   z-index: 80;
+
   ul {
     max-width: 100%;
   }
+
   li {
     padding: 20px 8px;
     min-width: 60px;
@@ -73,10 +75,12 @@ footer {
 
     a {
       color: grey;
+
       i {
         font-size: 2.5rem;
       }
     }
+
     span {
       display: none;
       padding-top: 10px;
@@ -88,6 +92,7 @@ footer {
   footer {
     li {
       padding: 20px;
+
       span {
         display: block;
       }

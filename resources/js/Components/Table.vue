@@ -51,6 +51,7 @@ const filteredItems = computed(() => {
         :data-label="header.text"
       >
         <!-- supplier -->
+
         <span v-if="header.value === 'supplier'">
           {{ item[header.value].name }}
         </span>
@@ -81,8 +82,20 @@ const filteredItems = computed(() => {
         <span v-else>
           {{ item[header.value] }}
 
-          <span v-if="header.value === 'store.name' && item.store">
+          <span v-if="header.value === 'store.name'">
             {{ item.store.name }}
+          </span>
+
+          <span v-if="header.value === 'supplier.name'">
+            {{ item.supplier.name }}
+          </span>
+
+          <span v-if="header.value === 'store.owner_name'">
+            {{ item.store.owner_name }}
+          </span>
+
+          <span v-if="header.value === 'store.email'">
+            {{ item.store.email }}
           </span>
 
           <span v-if="header.value === 'price' || header.value === 'total'"> € </span>
@@ -323,6 +336,32 @@ const filteredItems = computed(() => {
   #order-products-table thead {
     display: table-header-group;
     background: #f7f7f7;
+  }
+
+  #order-products-table {
+    width: 100%;
+    font-size: 13px;
+    border-collapse: collapse;
+  }
+
+  #order-products-table thead {
+    display: table-header-group;
+    background: #f7f7f7;
+  }
+
+  #order-products-table tr {
+    display: table-row;
+  }
+
+  #order-products-table th,
+  #order-products-table td {
+    display: table-cell;
+    padding: 6px 8px;
+    border-bottom: 1px solid #eee;
+  }
+
+  #order-products-table td::before {
+    display: none;
   }
 }
 </style>

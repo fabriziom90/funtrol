@@ -23,7 +23,7 @@ const form = useForm({
 });
 
 const handleSubmitForm = () => {
-  form.put(route("admin.products.update", { product: props.product.id }), {
+  form.put(route("products.update", { product: props.product.id }), {
     onSuccess: (page) => {
       const toast = page.props.toast;
       if (toast) {

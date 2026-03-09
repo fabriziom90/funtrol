@@ -20,7 +20,7 @@ const form = useForm({
 });
 
 const handleSubmitForm = () => {
-  form.put(route("admin.suppliers.update", props.supplier), {
+  form.put(route("suppliers.update", props.supplier), {
     onSuccess: (page) => {
       const toast = page.props.toast;
       if (toast) {

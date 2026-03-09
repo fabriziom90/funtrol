@@ -18,7 +18,7 @@ class OrderController extends Controller
     public function index(Request $request)
     {   
 
-        $query = Order::with(['store_id']);
+        $query = Order::with(['store', 'supplier', 'products']);
 
         if ($request->filled('store')) {
             $query->where('store_id', $request->store);
@@ -36,7 +36,7 @@ class OrderController extends Controller
             'columns' => [
                 ['text' => 'ID', 'value' => 'id'],
                 ['text' => 'Negozio', 'value' => 'store.name'],
-                ['text' => 'Fornitore', 'value' => 'supplier'],
+                ['text' => 'Fornitore', 'value' => 'supplier.name'],
                 ['text' => 'Prodotti', 'value' => 'products'],
                 ['text' => 'Totale', 'value' => 'total'],
             ],
@@ -90,7 +90,7 @@ class OrderController extends Controller
     {
         $order->delete();
 
-        return redirect()->route('admin.orders.index')->with([
+        return redirect()->route('orders.index')->with([
             'toast' => [
                 'type' => 'success',
                 'message' => 'Ordine cancellato con successo'

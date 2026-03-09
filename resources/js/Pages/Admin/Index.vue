@@ -1,6 +1,9 @@
 <script setup>
 import { Head, Link, router } from "@inertiajs/vue3";
 import MainLayout from "@/Layouts/MainLayout.vue";
+import { usePage } from "@inertiajs/vue3";
+
+const page = usePage();
 
 const logout = () => {
   router.post(route("logout"));
@@ -23,18 +26,21 @@ const logout = () => {
       <h3>Gestione dati di base, accesso riservato:</h3>
     </div>
     <div class="mt-4" id="sections">
-      <Link :href="route('admin.products.index')" class="card-section">
+      <Link
+        :href="route('admin.stores.index')"
+        class="card-section"
+        v-if="page.props.auth.user.role === 'superadmin'"
+      >
+        Gestione Negozi
+      </Link>
+      <Link :href="route('products.index')" class="card-section">
         Gestione Prodotti
       </Link>
-      <Link :href="route('admin.recepies.index')" class="card-section">
-        Gestione Ricette
-      </Link>
-      <Link :href="route('admin.suppliers.index')" class="card-section">
+      <Link :href="route('recepies.index')" class="card-section"> Gestione Ricette </Link>
+      <Link :href="route('suppliers.index')" class="card-section">
         Gestione Fornitori
       </Link>
-      <Link :href="route('admin.orders.index')" class="card-section">
-        Gestione Ordini
-      </Link>
+      <Link :href="route('orders.index')" class="card-section"> Gestione Ordini </Link>
     </div>
   </MainLayout>
 </template>

@@ -40,7 +40,7 @@ const handleDeleted = (toast) => {
 
 const applyFilter = () => {
   router.get(
-    route("admin.orders.index"),
+    route("orders.index"),
     {
       store: storeFilter.value,
     },
@@ -77,7 +77,7 @@ const applyFilter = () => {
       :show-view="false"
       :show-edit="false"
       :show-delete="true"
-      baseRoute="admin.orders"
+      baseRoute="orders"
       @delete="deleteOrder"
     >
     </Table>
@@ -98,7 +98,7 @@ const applyFilter = () => {
     <ModalDelete
       :show="showModal"
       :item="orderToDelete"
-      baseRoute="admin.orders"
+      baseRoute="orders"
       @close="closeDeleteModal"
       @deleted="handleDeleted"
     />

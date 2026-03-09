@@ -1,16 +1,17 @@
 <?php
 
+use App\Http\Controllers\Admin\AdministrationController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\RecepyController;
+use App\Http\Controllers\Admin\StoreController;
+use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\ProductionController;
-use App\Http\Controllers\WarehouseController;
-use App\Http\Controllers\CalendarController;
-use App\Http\Controllers\Admin\AdministrationController;
-use App\Http\Controllers\Admin\ProductController;
-use App\Http\Controllers\Admin\SupplierController;
-use App\Http\Controllers\Admin\RecepyController;
-use App\Http\Controllers\Admin\OrderController;
 
 
 /*
@@ -29,14 +30,14 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware('admin')->group(function () {
         Route::prefix('admin')->name('admin.')->group(function() {
-            Route::resource('suppliers', SupplierController::class);
-            Route::resource('products', ProductController::class);
-            Route::resource('recepies', RecepyController::class);
-            Route::resource('orders', OrderController::class);
-            Route::get('/administration', [AdministrationController::class, 'index'])->name('administration.index');
+            Route::resource('stores', StoreController::class);
         });
     });
-
+    Route::resource('suppliers', SupplierController::class);
+    Route::resource('products', ProductController::class);
+    Route::resource('recepies', RecepyController::class);
+    Route::resource('orders', OrderController::class);
+    Route::get('/administration', [AdministrationController::class, 'index'])->name('administration.index');
     Route::get('/production', [ProductionController::class, 'index'])->name('production.index');
     Route::put('/production/update', [ProductionController::class, 'update'])->name('production.update');
     Route::get('/warehouse', [WarehouseController::class, 'index'])->name('warehouse.index');

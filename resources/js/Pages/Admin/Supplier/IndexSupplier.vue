@@ -23,7 +23,7 @@ const supplierToDelete = ref(null);
 const storeFilter = ref(props.filters.store || "");
 
 const editSupplier = (supplierId) => {
-  router.visit(route("admin.suppliers.edit", supplierId));
+  router.visit(route("suppliers.edit", supplierId));
 };
 
 const deleteSupplier = (supplier) => {
@@ -46,7 +46,7 @@ const handleDeleted = (toast) => {
 
 const applyFilter = () => {
   router.get(
-    route("admin.suppliers.index"),
+    route("suppliers.index"),
     {
       store: storeFilter.value,
     },
@@ -67,7 +67,7 @@ const applyFilter = () => {
       </div>
       <div class="d-flex justify-content-between align-items-center">
         <h2>Gestione Fornitori</h2>
-        <Link :href="route('admin.suppliers.create')" class="main-button">
+        <Link :href="route('suppliers.create')" class="main-button">
           Crea fornitore
         </Link>
       </div>
@@ -87,7 +87,7 @@ const applyFilter = () => {
         :show-view="false"
         :show-edit="true"
         :show-delete="true"
-        baseRoute="admin.suppliers"
+        baseRoute="suppliers"
         @view="viewUser"
         @edit="editSupplier"
         @delete="deleteSupplier"
@@ -111,7 +111,7 @@ const applyFilter = () => {
     <ModalDelete
       :show="showModal"
       :item="supplierToDelete"
-      baseRoute="admin.suppliers"
+      baseRoute="suppliers"
       @close="closeDeleteModal"
       @deleted="handleDeleted"
     />

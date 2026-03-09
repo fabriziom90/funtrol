@@ -72,7 +72,7 @@ class ProductController extends Controller
        
         $newProduct->save();
 
-        return redirect()->route('admin.products.index')->with([
+        return redirect()->route('products.index')->with([
             'toast' => [
                 'type' => 'success',
                 'message' => 'Prodotto inserito con successo.'
@@ -115,7 +115,7 @@ class ProductController extends Controller
 
         $product->save();
 
-        return redirect()->route('admin.products.index')->with([
+        return redirect()->route('products.index')->with([
             'toast' => [
                 'type' => 'success',
                 'message' => 'Prodotto aggiornato con successo.'
@@ -130,7 +130,7 @@ class ProductController extends Controller
     {
         $product->delete();
 
-        return redirect()->route('admin.products.index')->with([
+        return redirect()->route('products.index')->with([
             'toast' => [
                 'type' => 'success',
                 'message' => 'Prodotto eliminato con successo.'

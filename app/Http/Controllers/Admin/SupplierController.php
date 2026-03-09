@@ -64,7 +64,7 @@ class SupplierController extends Controller
 
         $newSupplier->save();
 
-        return redirect()->route('admin.suppliers.index')->with([
+        return redirect()->route('suppliers.index')->with([
             'toast' => [
                 'type' => 'success',
                 'message' => "Fornitore creato con successo."
@@ -103,7 +103,7 @@ class SupplierController extends Controller
 
         $supplier->save();
 
-        return redirect()->route('admin.suppliers.index')->with([
+        return redirect()->route('suppliers.index')->with([
             'toast' => [
                 'type' => 'success',
                 'message' => 'Fornitore modificato con successo'
@@ -118,7 +118,7 @@ class SupplierController extends Controller
     {
         $supplier->delete();
 
-        return redirect()->route('admin.suppliers.index')->with([
+        return redirect()->route('suppliers.index')->with([
             'toast' => [
                 'type'      => 'success',
                 'message'  => 'Fornitore cancellato con successo'

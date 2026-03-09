@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { Head, Link } from "@inertiajs/vue3";
 import { useToast } from "vue-toast-notification";
 import { router } from "@inertiajs/vue3";
@@ -10,33 +10,31 @@ import Table from "@/Components/Table.vue";
 import ModalDelete from "@/Components/ModalDelete.vue";
 
 const props = defineProps({
-  recepies: Object,
-  filters: Object,
-  stores: Object,
+  users: Object,
   columns: Array,
 });
 
 const $toast = useToast();
 
 const showModal = ref(false);
-const recepyToDelete = ref(null);
-const storeFilter = ref(props.filters.store || "");
+const storeToDelete = ref(null);
+const search = ref("");
 
-const editRecepy = (recepyId) => {
-  router.visit(route("recepies.edit", recepyId));
+const editStore = (storeId) => {
+  router.visit(route("admin.stores.edit", storeId));
 };
 
-const showRecepy = (recepyId) => {
-  router.visit(route("recepies.show", recepyId));
+const showStore = (storeId) => {
+  router.visit(route("admin.stores.show", storeId));
 };
 
-const deleteRecepy = (recepy) => {
+const deleteStore = (store) => {
   showModal.value = true;
-  recepyToDelete.value = recepy;
+  storeToDelete.value = store;
 };
 
 const closeDeleteModal = () => {
-  recepyToDelete.value = null;
+  storeToDelete.value = null;
   showModal.value = false;
 };
 
@@ -47,21 +45,16 @@ const handleDeleted = (toast) => {
   });
 };
 
-const applyFilter = () => {
-  router.get(
-    route("recepies.index"),
-    {
-      store: storeFilter.value,
-    },
-    {
-      preserveState: true,
-      replace: true,
-    }
+const filteredStores = computed(() => {
+  if (search.value === "") return props.users.data;
+
+  return props.users.data.filter((user) =>
+    user.store.name.toLowerCase().includes(search.value.toLowerCase())
   );
-};
+});
 </script>
 <template>
-  <Head title="Amministrazione Ricette" />
+  <Head title="Amministrazione negozi"></Head>
   <MainLayout>
     <div class="my-3">
       <div class="d-flex admin-page-header">
@@ -69,35 +62,39 @@ const applyFilter = () => {
         <GoBackButton />
       </div>
       <div class="d-flex justify-content-between align-items-center">
-        <h2>Gestione Ricette</h2>
-        <Link :href="route('recepies.create')" class="main-button"> Crea Ricetta </Link>
+        <h2>Gestione Negozi</h2>
+        <Link :href="route('admin.stores.create')" class="main-button">
+          Crea Negozio
+        </Link>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-12">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Cerca negozio..."
+          v-model="search"
+        />
       </div>
     </div>
     <div>
-      <div class="mb-3">
-        <select v-model="storeFilter" @change="applyFilter" class="form-select w-auto">
-          <option value="">Tutti i negozi</option>
-          <option v-for="store in stores" :key="store.id" :value="store.id">
-            {{ store.name }}
-          </option>
-        </select>
-      </div>
       <Table
         :headers="columns"
-        :items="recepies.data"
-        :show-view="true"
+        :items="filteredStores"
+        :show-view="false"
         :show-edit="true"
         :show-delete="true"
-        baseRoute="recepies"
-        @view="showRecepy"
-        @edit="editRecepy"
-        @delete="deleteRecepy"
+        baseRoute="admin.store"
+        @view="showStore"
+        @edit="editStore"
+        @delete="deleteStore"
       >
       </Table>
     </div>
     <div class="mt-4 d-flex justify-content-center">
       <button
-        v-for="link in recepies.links"
+        v-for="link in users.links"
         :key="link.label"
         v-html="link.label"
         :disabled="!link.url"
@@ -111,8 +108,8 @@ const applyFilter = () => {
     </div>
     <ModalDelete
       :show="showModal"
-      :item="recepyToDelete"
-      baseRoute="recepies"
+      :item="storeToDelete"
+      baseRoute="admin.stores"
       @close="closeDeleteModal"
       @deleted="handleDeleted"
     />

@@ -75,7 +75,7 @@ class RecepyController extends Controller
             }
         }
 
-        return redirect()->route('admin.recepies.index')->with([
+        return redirect()->route('recepies.index')->with([
             'toast' => [
                 'type' => 'success',
                 'message' => "Ricetta creata con successo."
@@ -134,7 +134,7 @@ class RecepyController extends Controller
             $recepy->products()->sync($pivotData);
         }
 
-        return redirect()->route('admin.recepies.index')->with([
+        return redirect()->route('recepies.index')->with([
             'toast' => [
                 'type' => 'success',
                 'message' => "Ricetta aggiornata con successo."
@@ -148,7 +148,7 @@ class RecepyController extends Controller
     public function destroy(Recepy $recepy)
     {
         $recepy->delete();
-        return redirect()->route('admin.recepies.index')->with([
+        return redirect()->route('recepies.index')->with([
             'toast' => [
                 'type' => 'success',
                 'message' => 'Ricetta eliminata con successo'

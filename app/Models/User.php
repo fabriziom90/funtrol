@@ -46,7 +46,7 @@ class User extends Authenticatable
 
     public function store()
     {
-        return $this->belongsTo(Store::class);
+        return $this->hasOne(Store::class);
     }
 
     public function isSuperAdmin()
