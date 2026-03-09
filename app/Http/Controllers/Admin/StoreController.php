@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreStoreRequest;
+use App\Http\Requests\UpdateStoreRequest;
 use App\Models\Store;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -84,17 +85,49 @@ class StoreController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Store $store)
     {
-        //
+        $user = $store->user;
+
+        return Inertia::render('Admin/Stores/EditStore', ['store' => $store, 'user' => $user]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateStoreRequest $request, Store $store)
     {
-        //
+        $data = $request->validated();
+
+        DB::transaction(function () use ($data, $store) {
+
+            // Aggiorna store
+            $store->update([
+                'name' => $data['store']['name'],
+                'owner_name' => $data['store']['owner_name'],
+                'email' => $data['store']['email'],
+            ]);
+
+            // Utente collegato
+            $user = $store->user;
+
+            // Aggiorna email
+            $user->email = $data['user']['email'];
+
+            // Aggiorna password SOLO se compilata
+            if (!empty($data['user']['password'])) {
+                $user->password = Hash::make($data['user']['password']);
+            }
+
+            $user->save();
+        });
+
+        return redirect()->route('admin.stores.index')->with([
+            'toast' => [
+                'type' => 'success',
+                'message' => 'Negozio aggiornato con successo.'
+            ]
+        ]);
     }
 
     /**

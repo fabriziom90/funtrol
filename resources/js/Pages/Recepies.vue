@@ -1,6 +1,6 @@
 <script setup>
 import { Head, usePage, useForm } from "@inertiajs/vue3";
-import { ref, reactive } from "vue";
+import { ref, reactive, computed } from "vue";
 import { useToast } from "vue-toast-notification";
 import Alert from "../Components/Alert.vue";
 
@@ -27,6 +27,19 @@ const isLoading = ref(false);
 
 const form = useForm({
   quantities: productionQuantities,
+});
+
+const search = ref("");
+const filteredRecepies = ref(props.recepies);
+
+const filterRecepies = computed(() => {
+  if (search !== "") {
+    return props.recepies.filter((product) =>
+      product.name.toLowerCase().includes(search.value.toLowerCase())
+    );
+  }
+
+  return filteredRecepies;
 });
 
 const handleSubmit = () => {
@@ -78,8 +91,18 @@ const handleSubmit = () => {
           {{ new Date().toLocaleDateString() }}
         </p>
       </div>
-
-      <div class="col-12" v-for="(recepy, index) in recepies" :key="recepy.id">
+      <div class="col-12">
+        <div class="input-wrapper">
+          <i class="fa-solid fa-magnifying-glass fa-xl"></i>
+          <input
+            type="text"
+            placeholder="Cerca..."
+            v-model="search"
+            class="form-control form-control-lg"
+          />
+        </div>
+      </div>
+      <div class="col-12" v-for="(recepy, index) in filterRecepies" :key="recepy.id">
         <div class="card">
           <div class="d-flex justify-content-between align-items-center p-4">
             <div>
@@ -148,5 +171,23 @@ h2 {
   display: inline-block;
   text-align: center;
   font-size: 16px;
+}
+
+.input-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.input-wrapper i {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+.input-wrapper input {
+  padding-left: 50px;
 }
 </style>
