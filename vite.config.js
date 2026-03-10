@@ -17,5 +17,9 @@ export default defineConfig({
             },
         }),
     ],
-    base: '/funtrol/'
+    // build: {
+    //     outDir: 'public/build',
+    //     emptyOutDir: true,
+    // },
+    base: '/'
 });
