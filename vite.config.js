@@ -21,5 +21,5 @@ export default defineConfig({
     //     outDir: 'public/build',
     //     emptyOutDir: true,
     // },
-    base: '/'
+    // base: '/'
 });
