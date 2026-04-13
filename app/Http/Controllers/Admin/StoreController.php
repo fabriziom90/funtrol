@@ -7,6 +7,7 @@ use App\Http\Requests\StoreStoreRequest;
 use App\Http\Requests\UpdateStoreRequest;
 use App\Models\Store;
 use App\Models\User;
+use App\Enums\UserRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -18,7 +19,7 @@ class StoreController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {   
+    {
         $query = User::with('store')->where('role', '!=', 'superadmin');
         $users = $query->orderBy('id', 'desc')->paginate(10);
         return Inertia::render('Admin/Stores/IndexStores', [
@@ -55,6 +56,7 @@ class StoreController extends Controller
             $user = User::create([
                 'email' => $data['user']['email'],
                 'password' => Hash::make($data['user']['password']),
+                'role' => UserRole::USER
             ]);
 
             // Creazione store collegato
@@ -62,7 +64,7 @@ class StoreController extends Controller
                 'name' => $data['store']['name'],
                 'owner_name' => $data['store']['owner_name'],
                 'email' => $data['store']['email'],
-                'user_id' => $user->id, 
+                'user_id' => $user->id,
             ]);
         });
 
@@ -138,9 +140,9 @@ class StoreController extends Controller
         $user = $store->user;
 
         if ($user) {
-            $user->delete(); 
+            $user->delete();
         }
-        
+
         return redirect()->route('admin.stores.index')->with([
             'toast' => [
                 'type' => 'success',
