@@ -18,6 +18,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
+
         $query = Product::with(['supplier', 'store']);
 
         if ($request->filled('store')) {
@@ -50,8 +51,17 @@ class ProductController extends Controller
      */
     public function create()
     {
-        $suppliers = Supplier::all();
-        $stores = Store::all();
+        $user = auth()->user();
+
+        if($user->role->value === "owner"){
+            $stores = Store::where("id", $user->store->id)->select("id", "name")->get();
+            $suppliers = Supplier::where("store_id", $user->store->id)->select("id", "name")->get();
+        }
+        else{
+            $stores = Store::select("id", "name")->get();
+            $suppliers = Supplier::all();
+        }
+
         return Inertia::render('Admin/Products/CreateProduct', ['suppliers' => $suppliers, 'stores' => $stores]);
     }
 
@@ -63,13 +73,15 @@ class ProductController extends Controller
         $form_data = $request->validated();
 
         $newProduct = new Product();
+
         $newProduct->name = $form_data['name'];
         $newProduct->price = $form_data['price'];
         $newProduct->supplier_id = $form_data['supplier_id'];
         $newProduct->grams_in_warehouse = $form_data['grams_in_warehouse'];
         $newProduct->unit = $request->get('unit');
         $newProduct->store_id = $form_data['store_id'];
-       
+        $newProduct->min_stock = $form_data['min_stock'];
+
         $newProduct->save();
 
         return redirect()->route('products.index')->with([
@@ -85,17 +97,25 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        
+
     }
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(Product $product)
-    {   
-        $suppliers = Supplier::all();
-        $stores = Store::all();
-        
+    {
+        $user = auth()->user();
+
+        if($user->role->value === "owner"){
+            $stores = Store::where("id", $user->store->id)->select("id", "name")->get();
+            $suppliers = Supplier::where("store_id", $user->store->id)->select("id", "name")->get();
+        }
+        else{
+            $stores = Store::select("id", "name")->get();
+            $suppliers = Supplier::all();
+        }
+
         return Inertia::render('Admin/Products/EditProduct', ['suppliers' => $suppliers, 'product' => $product, 'stores' => $stores]);
     }
 
@@ -105,14 +125,14 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, Product $product)
     {
         $form_data = $request->validated();
-        
+
         $product->name = $form_data['name'];
         $product->price = $form_data['price'];
         $product->supplier_id = $form_data['supplier_id'];
         $product->grams_in_warehouse = $form_data['grams_in_warehouse'];
         $product->unit = $request->get('unit');
         $product->store_id = $form_data['store_id'];
-
+        $product->min_stock = $form_data['min_stock'];
         $product->save();
 
         return redirect()->route('products.index')->with([

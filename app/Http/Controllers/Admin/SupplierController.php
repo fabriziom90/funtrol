@@ -44,8 +44,16 @@ class SupplierController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-    {   
-        $stores = Store::all();
+    {
+        $user = auth()->user();
+
+        if($user->role->value === "owner"){
+            $stores = Store::where("id", $user->store->id)->select("id", "name")->get();
+        }
+        else{
+            $stores = Store::select("id", "name")->get();
+        }
+
         return Inertia::render('Admin/Supplier/CreateSupplier', ['stores' => $stores]);
     }
 
@@ -84,8 +92,16 @@ class SupplierController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(Supplier $supplier)
-    {   
-        $stores = Store::all();
+    {
+        $user = auth()->user();
+
+        if($user->role->value === "owner"){
+            $stores = Store::where("id", $user->store->id)->select("id", "name")->get();
+        }
+        else{
+            $stores = Store::select("id", "name")->get();
+        }
+
         return Inertia::render('Admin/Supplier/EditSupplier', ['supplier' => $supplier, 'stores' => $stores]);
     }
 

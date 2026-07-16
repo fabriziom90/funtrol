@@ -11,9 +11,16 @@ use App\Models\WarehouseMovement;
 class ProductionController extends Controller
 {
     public function index()
-    {   
-        $recepies = Recepy::all();
-        
+    {
+        $user = auth()->user();
+
+        if($user->role->value === "owner"){
+            $recepies = Recepy::where("store_id", $user->store->user_id)->get();
+        }
+        else{
+            $recepies = Recepy::all();
+        }
+
         return Inertia::render('Recepies', ['recepies' => $recepies,  'toast' => session('toast'), 'critical_count' => session('critical_count')]);
     }
 
@@ -21,7 +28,7 @@ class ProductionController extends Controller
     {
         $form_data = $request->all();
         $quantities = $form_data['quantities'];
-    
+
          $criticalProducts = [];
 
         foreach ($quantities as $item) {
@@ -30,7 +37,7 @@ class ProductionController extends Controller
 
             if (!$recepy || $producedQuantity <= 0) continue;
 
-            
+
             foreach ($recepy->products as $product) {
                 $required = $product->pivot->grams_used * $producedQuantity;
 
@@ -50,7 +57,7 @@ class ProductionController extends Controller
                     ]);
                 }
             }
-            
+
 
             foreach ($recepy->products as $product) {
 
@@ -68,7 +75,7 @@ class ProductionController extends Controller
                 $after = $product->grams_in_warehouse;
 
                 if($producedQuantity > 0){
-                    // 🔥 registra movimento
+
                     WarehouseMovement::create([
                         'type'           => 'stock_out',
                         'quantity'       => $gramsToSubtract,
@@ -80,7 +87,7 @@ class ProductionController extends Controller
                         'note'           => "Produzione di {$producedQuantity} x {$recepy->name}",
                         'user_id'        => auth()->id(),
                     ]);
-    
+
                     if ($after < $product->min_stock) {
                         $criticalProducts[$product->id] = $product;
                     }

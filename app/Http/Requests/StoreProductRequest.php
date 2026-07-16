@@ -26,7 +26,8 @@ class StoreProductRequest extends FormRequest
             'price' => ['required', 'numeric', 'min:0'],
             'grams_in_warehouse' => ['required', 'integer', 'min:0'],
             'supplier_id' => ['required', 'exists:suppliers,id'],
-            'store_id' => ['required', 'exists:stores,id']
+            'store_id' => ['required', 'exists:stores,id'],
+            'min_stock' => ['required', 'min:1', 'integer']
         ];
     }
 
@@ -44,6 +45,10 @@ class StoreProductRequest extends FormRequest
             'grams_in_warehouse.required' => 'I grammi in magazzino sono obbligatori.',
             'grams_in_warehouse.integer' => 'I grammi devono essere un numero intero.',
             'grams_in_warehouse.min' => 'I grammi non possono essere negativi.',
+
+            'min_stock.required' => 'La soglia minima in magazzino sono obbligatori.',
+            'min_stock.integer' => 'La soglia minima deve essere un numero intero.',
+            'min_stock.min' => 'La soglia minima non può essere negativi.',
 
             'supplier_id.required' => 'Il fornitore è obbligatorio.',
             'supplier_id.exists' => 'Il fornitore selezionato non esiste.',

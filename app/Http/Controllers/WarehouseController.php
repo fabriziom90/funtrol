@@ -18,8 +18,16 @@ class WarehouseController extends Controller
 {
     public function index()
     {
-        $products = Product::with(['supplier'])->orderByRaw('(grams_in_warehouse < min_stock) DESC')->get();
-        
+        $user = auth()->user();
+
+        if($user->role->value === "owner"){
+            $products = Product::with(['supplier'])->where("store_id", $user->store->user_id)->orderByRaw('(grams_in_warehouse < min_stock) DESC')->get();
+        }
+        else{
+            $products = Product::with(['supplier'])->orderByRaw('(grams_in_warehouse < min_stock) DESC')->get();
+        }
+
+
         return Inertia::render('Warehouse', ['products' => $products, 'toast' => session('toast'), 'authUser' => Auth::user()]);
     }
 
@@ -88,7 +96,7 @@ class WarehouseController extends Controller
     public function updateProductQuantity(Request $request)
     {
         $form_data = $request->all();
-        
+
         $quantity = $form_data['grams_in_warehouse'];
         $product_id = $form_data['product'];
 
@@ -123,14 +131,14 @@ class WarehouseController extends Controller
     }
 
     public function sendSupplierEmail(Request $request)
-    {   
+    {
         $form_data = $request->all();
         $data = $request->validate([
             'to'      => ['required', 'email'],
             'subject' => ['required', 'string'],
             'body'    => ['required', 'string'],
         ]);
-        
+
         DB::transaction(function () use ($form_data) {
 
             $total = collect($form_data['products'])->sum(fn ($p) =>
@@ -168,6 +176,6 @@ class WarehouseController extends Controller
                 'message' => 'Ordine registrato e mail inviata correttamente',
             ]
         ]);
-    
+
     }
 }

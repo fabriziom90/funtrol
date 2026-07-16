@@ -3,11 +3,11 @@ import { ref, computed, watch } from "vue";
 
 // --- 1️⃣ Props correttamente definite all’inizio ---
 const props = defineProps({
-  headers: { type: Array, required: true }, // {text, value, filterable}
-  items: { type: Array, required: true },
-  showView: { type: Boolean, default: true },
-  showEdit: { type: Boolean, default: true },
-  showDelete: { type: Boolean, default: true },
+    headers: { type: Array, required: true }, // {text, value, filterable}
+    items: { type: Array, required: true },
+    showView: { type: Boolean, default: true },
+    showEdit: { type: Boolean, default: true },
+    showDelete: { type: Boolean, default: true },
 });
 
 // --- 2️⃣ Variabili locali ---
@@ -16,125 +16,108 @@ const showActions = computed(() => props.showView || props.showEdit || props.sho
 // Filtri
 const filters = ref({});
 props.headers.forEach((h) => {
-  if (h.filterable) filters.value[h.value] = "";
+    if (h.filterable) filters.value[h.value] = "";
 });
 
 // --- 3️⃣ Computed filtraggio ---
 const filteredItems = computed(() => {
-  if (!props.items) return [];
-  return props.items.filter((item) => {
-    return props.headers.every((header) => {
-      if (!header.filterable) return true;
-      const filter = (filters.value[header.value] || "").toLowerCase();
-      const value = (item[header.value] ?? "").toString().toLowerCase();
-      return value.includes(filter);
+    if (!props.items) return [];
+    return props.items.filter((item) => {
+        return props.headers.every((header) => {
+            if (!header.filterable) return true;
+            const filter = (filters.value[header.value] || "").toLowerCase();
+            const value = (item[header.value] ?? "").toString().toLowerCase();
+            return value.includes(filter);
+        });
     });
-  });
 });
 </script>
 <template>
-  <div class="data-grid">
-    <!-- HEADER (desktop only) -->
-    <div class="data-header">
-      <div class="data-cell header-cell" v-for="header in headers" :key="header.value">
-        {{ header.text }}
-      </div>
-      <div v-if="showActions" class="data-cell header-cell">Strumenti</div>
-    </div>
-
-    <!-- ROWS -->
-    <div class="data-row" v-for="item in filteredItems" :key="item.id">
-      <div
-        class="data-cell"
-        v-for="header in headers"
-        :key="header.value"
-        :data-label="header.text"
-      >
-        <!-- supplier -->
-
-        <span v-if="header.value === 'supplier'">
-          {{ item[header.value].name }}
-        </span>
-
-        <!-- products -->
-        <div v-else-if="header.value === 'products'" class="products-box">
-          <table id="order-products-table" class="table">
-            <thead>
-              <th>Prodotto</th>
-              <th>Prezzo al kg</th>
-              <th>Quantità ordinata</th>
-              <th>Totale prodotto</th>
-            </thead>
-            <tbody>
-              <tr v-for="product in item[header.value]" :key="product.id">
-                <td>{{ product.name }}</td>
-                <td>{{ product.price }}€/kg</td>
-                <td>{{ product.pivot.quantity }}g</td>
-                <td>
-                  {{ ((product.pivot.quantity * product.price) / 1000).toFixed(2) }}€
-                </td>
-              </tr>
-            </tbody>
-          </table>
+    <div class="data-grid">
+        <!-- HEADER (desktop only) -->
+        <div class="data-header">
+            <div class="data-cell header-cell" v-for="header in headers" :key="header.value">
+                {{ header.text }}
+            </div>
+            <div v-if="showActions" class="data-cell header-cell">Strumenti</div>
         </div>
 
-        <!-- default -->
-        <span v-else>
-          {{ item[header.value] }}
+        <!-- ROWS -->
+        <div class="data-row" v-for="item in filteredItems" :key="item.id">
+            <div class="data-cell" v-for="header in headers" :key="header.value" :data-label="header.text">
+                <!-- supplier -->
 
-          <span v-if="header.value === 'store.name'">
-            {{ item.store.name }}
-          </span>
+                <span v-if="header.value === 'supplier'">
+                    {{ item[header.value].name }}
+                </span>
 
-          <span v-if="header.value === 'supplier.name'">
-            {{ item.supplier.name }}
-          </span>
+                <!-- products -->
+                <div v-else-if="header.value === 'products'" class="products-box">
+                    <table id="order-products-table" class="table">
+                        <thead>
+                            <th>Prodotto</th>
+                            <th>Prezzo al kg</th>
+                            <th>Quantità ordinata</th>
+                            <th>Totale prodotto</th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="product in item[header.value]" :key="product.id">
+                                <td>{{ product.name }}</td>
+                                <td>{{ product.price }}€/kg</td>
+                                <td>{{ product.pivot.quantity }}g</td>
+                                <td>
+                                    {{ ((product.pivot.quantity * product.price) / 1000).toFixed(2) }}€
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-          <span v-if="header.value === 'store.owner_name'">
-            {{ item.store.owner_name }}
-          </span>
+                <!-- default -->
+                <span v-else>
+                    {{ item[header.value] }}
 
-          <span v-if="header.value === 'store.email'">
-            {{ item.store.email }}
-          </span>
+                    <span v-if="header.value === 'store.name'">
+                        {{ item.store.name }}
+                    </span>
 
-          <span v-if="header.value === 'price' || header.value === 'total'"> € </span>
+                    <span v-if="header.value === 'supplier.name'">
+                        {{ item.supplier.name }}
+                    </span>
 
-          <span v-if="header.value === 'quantity' || header.grams_in_warehouse">
-            {{ item.unit }}
-          </span>
-        </span>
-      </div>
+                    <span v-if="header.value === 'store.owner_name'">
+                        {{ item.store.owner_name }}
+                    </span>
 
-      <!-- ACTIONS -->
-      <div v-if="showActions" class="data-cell actions-cell">
-        <button
-          v-if="showView"
-          class="btn btn-sm btn-info me-1"
-          @click="$emit('view', item)"
-        >
-          <i class="fa fa-eye"></i>
-        </button>
-        <button
-          v-if="showEdit"
-          class="btn btn-sm btn-warning me-1"
-          @click="$emit('edit', item)"
-        >
-          <i class="fa fa-edit"></i>
-        </button>
-        <button
-          v-if="showDelete"
-          class="btn btn-sm btn-danger"
-          @click="$emit('delete', item)"
-        >
-          <i class="fa fa-trash"></i>
-        </button>
-      </div>
+                    <span v-if="header.value === 'store.email'">
+                        {{ item.store.email }}
+                    </span>
+
+                    <span v-if="header.value === 'price' || header.value === 'total'"> € </span>
+
+                    <span v-if="header.value === 'quantity' || header.grams_in_warehouse">
+                        {{ item.unit }}
+                    </span>
+                </span>
+            </div>
+
+            <!-- ACTIONS -->
+            <div v-if="showActions" class="data-cell actions-cell">
+                <button v-if="showView" class="btn btn-sm btn-info me-1" @click="$emit('view', item)">
+                    <i class="fa fa-eye"></i>
+                </button>
+                <button v-if="showEdit" class="btn btn-sm btn-warning me-1" @click="$emit('edit', item)">
+                    <i class="fa fa-edit"></i>
+                </button>
+                <button v-if="showDelete" class="btn btn-sm btn-danger" @click="$emit('delete', item)">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- EMPTY -->
+        <div v-if="filteredItems.length === 0" class="empty-row">Nessun dato disponibile</div>
     </div>
-
-    <!-- EMPTY -->
-    <div v-if="filteredItems.length === 0" class="empty-row">Nessun dato disponibile</div>
-  </div>
 </template>
 <style lang="scss" scoped>
 @use "../../scss/app.scss";
@@ -144,63 +127,63 @@ const filteredItems = computed(() => {
    ========================= */
 
 .data-grid {
-  width: 100%;
-  display: block;
-  font-size: 14px;
+    width: 100%;
+    display: block;
+    font-size: 14px;
 }
 
 /* HEADER (nascosto su mobile) */
 .data-header {
-  display: none;
+    display: none;
 }
 
 /* RIGA */
 .data-row {
-  display: block;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  margin-bottom: 12px;
-  padding: 12px;
+    display: block;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    padding: 12px;
 }
 
 /* CELLE */
 .data-cell {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 6px 0;
-  border-bottom: 1px dashed #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 0;
+    border-bottom: 1px dashed #e0e0e0;
 }
 
 .data-cell:last-child {
-  border-bottom: none;
+    border-bottom: none;
 }
 
 /* label mobile */
 .data-cell::before {
-  content: attr(data-label);
-  font-weight: 600;
-  color: #555;
-  flex: 0 0 45%;
+    content: attr(data-label);
+    font-weight: 600;
+    color: #555;
+    flex: 0 0 45%;
 }
 
 /* contenuto */
-.data-cell > span,
-.data-cell > div {
-  flex: 1;
-  text-align: right;
-  word-break: break-word;
+.data-cell>span,
+.data-cell>div {
+    flex: 1;
+    text-align: right;
+    word-break: break-word;
 }
 
 /* AZIONI */
 .actions-cell {
-  justify-content: flex-end;
-  gap: 6px;
+    justify-content: flex-end;
+    gap: 6px;
 }
 
 .actions-cell::before {
-  display: none;
+    display: none;
 }
 
 /* =========================
@@ -208,54 +191,54 @@ const filteredItems = computed(() => {
    ========================= */
 
 .products-box {
-  width: 100%;
-  margin-top: 8px;
+    width: 100%;
+    margin-top: 8px;
 }
 
 #order-products-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
 }
 
 #order-products-table thead {
-  display: none;
+    display: none;
 }
 
 #order-products-table tr {
-  display: block;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 8px;
-  margin-bottom: 8px;
-  background: #fafafa;
+    display: block;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 8px;
+    margin-bottom: 8px;
+    background: #fafafa;
 }
 
 #order-products-table td {
-  display: flex;
-  justify-content: space-between;
-  padding: 4px 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
 }
 
 #order-products-table td::before {
-  font-weight: 600;
-  color: #555;
+    font-weight: 600;
+    color: #555;
 }
 
 #order-products-table td:nth-child(1)::before {
-  content: "Prodotto";
+    content: "Prodotto";
 }
 
 #order-products-table td:nth-child(2)::before {
-  content: "Prezzo";
+    content: "Prezzo";
 }
 
 #order-products-table td:nth-child(3)::before {
-  content: "Quantità";
+    content: "Quantità";
 }
 
 #order-products-table td:nth-child(4)::before {
-  content: "Totale";
+    content: "Totale";
 }
 
 /* =========================
@@ -263,9 +246,9 @@ const filteredItems = computed(() => {
    ========================= */
 
 .empty-row {
-  text-align: center;
-  padding: 20px;
-  color: #777;
+    text-align: center;
+    padding: 20px;
+    color: #777;
 }
 
 /* =========================
@@ -273,95 +256,95 @@ const filteredItems = computed(() => {
    ========================= */
 
 @media (min-width: 768px) {
-  .data-grid {
-    display: table;
-    width: 100%;
-    border-collapse: collapse;
-  }
+    .data-grid {
+        display: table;
+        width: 100%;
+        border-collapse: collapse;
+    }
 
-  /* HEADER */
-  .data-header {
-    display: table-header-group;
-    background: #f3f3f3;
-    font-weight: 600;
-  }
+    /* HEADER */
+    .data-header {
+        display: table-header-group;
+        background: #f3f3f3;
+        font-weight: 600;
+    }
 
-  .header-cell {
-    display: table-cell;
-    padding: 12px 10px;
-    border-bottom: 2px solid #ddd;
-    white-space: nowrap;
-  }
+    .header-cell {
+        display: table-cell;
+        padding: 12px 10px;
+        border-bottom: 2px solid #ddd;
+        white-space: nowrap;
+    }
 
-  /* ROW */
-  .data-row {
-    display: table-row;
-    background: white;
-  }
+    /* ROW */
+    .data-row {
+        display: table-row;
+        background: white;
+    }
 
-  .data-row:nth-child(even) {
-    background: #fafafa;
-  }
+    .data-row:nth-child(even) {
+        background: #fafafa;
+    }
 
-  /* CELLE */
-  .data-cell {
-    display: table-cell;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-    vertical-align: top;
-  }
+    /* CELLE */
+    .data-cell {
+        display: table-cell;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        vertical-align: top;
+    }
 
-  .data-cell::before {
-    display: none;
-  }
+    .data-cell::before {
+        display: none;
+    }
 
-  /* AZIONI */
-  .actions-cell {
-    white-space: nowrap;
-  }
+    /* AZIONI */
+    .actions-cell {
+        white-space: nowrap;
+    }
 
-  /* PRODUCTS SUBTABLE */
-  #order-products-table {
-    width: 100%;
-    font-size: 13px;
-    border-collapse: collapse;
-  }
+    /* PRODUCTS SUBTABLE */
+    #order-products-table {
+        width: 100%;
+        font-size: 13px;
+        border-collapse: collapse;
+    }
 
-  #order-products-table th,
-  #order-products-table td {
-    padding: 6px 8px;
-    border-bottom: 1px solid #eee;
-  }
+    #order-products-table th,
+    #order-products-table td {
+        padding: 6px 8px;
+        border-bottom: 1px solid #eee;
+    }
 
-  #order-products-table thead {
-    display: table-header-group;
-    background: #f7f7f7;
-  }
+    #order-products-table thead {
+        display: table-header-group;
+        background: #f7f7f7;
+    }
 
-  #order-products-table {
-    width: 100%;
-    font-size: 13px;
-    border-collapse: collapse;
-  }
+    #order-products-table {
+        width: 100%;
+        font-size: 13px;
+        border-collapse: collapse;
+    }
 
-  #order-products-table thead {
-    display: table-header-group;
-    background: #f7f7f7;
-  }
+    #order-products-table thead {
+        display: table-header-group;
+        background: #f7f7f7;
+    }
 
-  #order-products-table tr {
-    display: table-row;
-  }
+    #order-products-table tr {
+        display: table-row;
+    }
 
-  #order-products-table th,
-  #order-products-table td {
-    display: table-cell;
-    padding: 6px 8px;
-    border-bottom: 1px solid #eee;
-  }
+    #order-products-table th,
+    #order-products-table td {
+        display: table-cell;
+        padding: 6px 8px;
+        border-bottom: 1px solid #eee;
+    }
 
-  #order-products-table td::before {
-    display: none;
-  }
+    #order-products-table td::before {
+        display: none;
+    }
 }
 </style>

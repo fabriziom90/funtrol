@@ -30,7 +30,7 @@ class RecepyController extends Controller
             ->withQueryString(); // mantiene i filtri nella paginazione
 
         return Inertia::render('Admin/Recepies/IndexRecepies', [
-            'recepies' => $recepies, 
+            'recepies' => $recepies,
             'columns' => [
                 ['text' => 'ID', 'value' => 'id'],
                 ['text' => 'Nome', 'value' => 'name'],
@@ -48,8 +48,18 @@ class RecepyController extends Controller
      */
     public function create()
     {
-        $products = Product::all();
-        $stores = Store::all();
+        $user = auth()->user();
+
+        if($user->role->value === "owner"){
+            $stores = Store::where("id", $user->store->id)->select("id", "name")->get();
+            $products = Product::where("store_id", $user->store->id)->select("id", "name")->get();
+
+        }
+        else{
+            $stores = Store::select("id", "name")->get();
+            $products = Product::select("id", "name")->get();
+        }
+
         return Inertia::render('Admin/Recepies/CreateRecepy', ['products' => $products, 'stores' => $stores]);
     }
 
@@ -59,7 +69,7 @@ class RecepyController extends Controller
     public function store(StoreRecepyRequest $request)
     {
         $form_data = $request->validated();
-        
+
         $newRecepy = new Recepy();
         $newRecepy->name = $form_data['name'];
         $newRecepy->unit = $request->get('unit');
@@ -87,7 +97,7 @@ class RecepyController extends Controller
      * Display the specified resource.
      */
     public function show(Recepy $recepy)
-    {   
+    {
         return Inertia::render('Admin/Recepies/ShowRecepy', ['recepy' => $recepy->load('products')]);
     }
 
@@ -96,8 +106,17 @@ class RecepyController extends Controller
      */
     public function edit(Recepy $recepy)
     {
-        $products = Product::all();
-        $stores = Store::all();
+        $user = auth()->user();
+
+        if($user->role->value === "owner"){
+            $stores = Store::where("id", $user->store->id)->select("id", "name")->get();
+            $products = Product::where("store_id", $user->store->id)->select("id", "name")->get();
+
+        }
+        else{
+            $stores = Store::select("id", "name")->get();
+            $products = Product::select("id", "name")->get();
+        }
         return Inertia::render('Admin/Recepies/EditRecepy', ['recepy' => $recepy->load('products'), 'products' => $products, 'stores' => $stores]);
     }
 
